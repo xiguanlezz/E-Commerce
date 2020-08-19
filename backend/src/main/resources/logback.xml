@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--该配置文件必须放在classpath下面-->
+<configuration>
+    <!--    控制台输出-->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-5level - %msg %n</pattern>
+        </encoder>
+    </appender>
+    <root level="debug">
+        <appender-ref ref="STDOUT" />
+    </root>
+    <!--    输出SQL语句-->
+    <logger name="com.cj.cn.mapper" level="DEBUG"></logger>
+</configuration>

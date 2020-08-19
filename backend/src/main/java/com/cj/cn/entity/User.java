@@ -2,17 +2,21 @@ package com.cj.cn.entity;
 
 import java.util.Date;
 import javax.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+
+import lombok.*;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
-@Table(name = "mmall_user")
+@ToString
+@Accessors(chain = true)
+@Table(name = "mmall_user")   //通用mapper默认查询的表名是实体类类名首字母小写
 public class User {
     /**
      * 用户表id
      */
-    @Id
+    @Id     //如果没有使用这个注解则默认将实体类中的所有字段当做联合主键
+    @GeneratedValue(strategy = GenerationType.IDENTITY)     //返回自增的主键
     private Integer id;
 
     /**
@@ -47,7 +51,7 @@ public class User {
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
+    @Column(name = "create_time")   //指定数据库表中对应的字段, 默认是去掉驼峰
     private Date createTime;
 
     /**

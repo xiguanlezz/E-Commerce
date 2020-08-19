@@ -16,4 +16,11 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+  <select id="checkUsername" resultType="java.lang.Integer">
+    SELECT count(1) FROM mmal_user WHERE username=#{username}
+  </select>
+  <select id="checkEmail" resultType="java.lang.Integer">
+    SELECT count(1) FROM mmal_user WHERE email=#{email}
+  </select>
 </mapper>
