@@ -56,11 +56,15 @@ public class ResultResponse implements Serializable {
         return new ResultResponse(ResponseCode.SUCCESS.getCode());
     }
 
+    public static ResultResponse ok(Object data) {
+        return new ResultResponse(ResponseCode.SUCCESS.getCode(), data);
+    }
+
     public static ResultResponse ok(String successMsg) {
         return new ResultResponse(ResponseCode.SUCCESS.getCode(), successMsg);
     }
 
-    public static <T> ResultResponse ok(String msg, T data) {
+    public static <T> ResultResponse ok(String msg, Object data) {
         return new ResultResponse(ResponseCode.SUCCESS.getCode(), msg, data);
     }
 

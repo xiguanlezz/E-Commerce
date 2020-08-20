@@ -2,14 +2,15 @@ package com.cj.cn;
 
 import com.cj.cn.entity.User;
 import com.cj.cn.mapper.UserMapper;
-import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.Date;
+import java.util.List;
 
 @SpringBootTest(classes = StartApplication.class)
 @RunWith(SpringRunner.class)
@@ -92,5 +93,24 @@ public class TKMybatisApplicationTests {
     public void testDeleteByPrimaryKey() {
         Integer userId = 25;
         userMapper.deleteByPrimaryKey(userId);
+    }
+
+    @Test
+    public void testSelectByExample() {
+        Example example = new Example(User.class);
+        Example.Criteria criteria01 = example.createCriteria();
+        Example.Criteria criteria02 = example.createCriteria();
+
+        example.orderBy("password").desc().orderBy("id").asc();     //设置排序规则
+        example.selectProperties("username", "password", "role");    //设置select的字段
+        example.setDistinct(true);      //设置去重
+
+        criteria01.andBetween("role", 0, 1).andEqualTo("username", "admin");
+        criteria02.andLessThan("id", 10);
+        example.or(criteria02);     //拼接条件
+        List<User> users = userMapper.selectByExample(example);
+        for (User user : users) {
+            System.out.println(user);
+        }
     }
 }

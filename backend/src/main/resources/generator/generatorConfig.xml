@@ -21,12 +21,15 @@
                         password="${jdbc.password}">
         </jdbcConnection>
 
+        <!--配置Java实体类的存放位置-->
         <javaModelGenerator targetPackage="com.cj.cn.entity"
                             targetProject="src/main/java"/>
 
+        <!--配置XxxMapper.xml的存放位置-->
         <sqlMapGenerator targetPackage="mapper"
                          targetProject="src/main/resources"/>
 
+        <!--配置XxxMapper.java的存放位置-->
         <javaClientGenerator targetPackage="com.cj.cn.mapper"
                              targetProject="src/main/java"
                              type="XMLMAPPER"/>
@@ -43,6 +46,5 @@
             <columnOverride column="sub_images" jdbcType="VARCHAR" />
         </table>
         <table tableName="mmall_user" domainObjectName="User" enableCountByExample="false" enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"></table>
-
     </context>
 </generatorConfiguration>

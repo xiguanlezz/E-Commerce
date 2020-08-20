@@ -13,7 +13,7 @@ public class WebMVCConfig implements WebMvcConfigurer {
         System.out.println("-----------CORS---------------");
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOrigins("http://www.mmal.com")
+                .allowedOrigins("http://127.0.0.1", "http://localhost", "http://www.mmal.com")
                 .allowedMethods("*")
                 .maxAge(3600);
     }
