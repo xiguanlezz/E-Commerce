@@ -13,7 +13,8 @@ public class WebMVCConfig implements WebMvcConfigurer {
         System.out.println("-----------CORS---------------");
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOrigins("http://127.0.0.1", "http://localhost", "http://www.mmal.com")
+                //http默认端口是80, https默认端口是443
+                .allowedOrigins("http://127.0.0.1", "http://localhost", "http://127.0.0.1:8088","http://localhost:8088")
                 .allowedMethods("*")
                 .maxAge(3600);
     }
