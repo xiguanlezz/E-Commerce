@@ -14,7 +14,9 @@ public class WebMVCConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowCredentials(true)
                 //http默认端口是80, https默认端口是443
-                .allowedOrigins("http://127.0.0.1", "http://localhost", "http://127.0.0.1:8088","http://localhost:8088")
+                .allowedOrigins("http://127.0.0.1", "http://localhost")
+                .allowedOrigins("http://127.0.0.1:8088", "http://localhost:8088")
+                .allowedOrigins("http://127.0.0.1:8086", "http://localhost:8086")
                 .allowedMethods("*")
                 .maxAge(3600);
     }
