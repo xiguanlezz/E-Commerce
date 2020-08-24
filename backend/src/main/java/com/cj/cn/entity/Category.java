@@ -4,9 +4,13 @@ import java.util.Date;
 import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
+@ToString
+@Accessors(chain = true)
 @Table(name = "mmall_category")
 public class Category {
     /**

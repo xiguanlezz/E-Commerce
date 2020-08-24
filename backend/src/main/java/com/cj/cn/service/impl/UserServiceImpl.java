@@ -165,4 +165,12 @@ public class UserServiceImpl implements IUserService {
             return ResultResponse.error("更新用户信息失败");
         }
     }
+
+    @Override
+    public ResultResponse checkAdminRole(User user) {
+        if (user != null && user.getRole().intValue() == Const.Role.ROLE_ADMIN) {
+            return ResultResponse.ok();
+        }
+        return ResultResponse.error("非管理员");
+    }
 }
