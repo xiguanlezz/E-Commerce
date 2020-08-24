@@ -18,23 +18,23 @@
   </resultMap>
 
   <select id="checkUsername" resultType="java.lang.Integer">
-    SELECT count(1) FROM mmall_user WHERE username=#{username}
+    SELECT count(1) FROM mmall_user WHERE username = #{username}
   </select>
 
   <select id="checkEmail" resultType="java.lang.Integer">
-    SELECT count(1) FROM mmall_user WHERE email=#{email}
+    SELECT count(1) FROM mmall_user WHERE email = #{email}
   </select>
 
   <select id="selectQuestionByUsername" resultType="java.lang.String">
-    SELECT question FROM mmall_user WHERE username=#{username}
+    SELECT question FROM mmall_user WHERE username = #{username}
   </select>
 
   <select id="checkAnswer" resultType="java.lang.Integer">
-    SELECT count(1) FROM mmall_user WHERE username=#{username} AND question=#{question} AND answer=#{answer}
+    SELECT count(1) FROM mmall_user WHERE username = #{username} AND question = #{question} AND answer = #{answer}
   </select>
 
   <update id="updatePasswordByUsername">
-    UPDATE mmall_user SET password=#{password}, update_time=now() WHERE username=#{username}
+    UPDATE mmall_user SET password = #{password}, update_time = now() WHERE username = #{username}
   </update>
 
 </mapper>

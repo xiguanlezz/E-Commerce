@@ -13,4 +13,8 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+  <select id="selectCategoryChildrenByParentId" resultType="com.cj.cn.entity.Category">
+    SELECT id, parent_id, name FROM mmall_category WHERE parent_id = #{id}
+  </select>
 </mapper>

@@ -19,7 +19,7 @@ public class UserController {
     private IUserService iUserService;
 
     /**
-     * 登录请求
+     * 普通用户登录请求
      *
      * @param username
      * @param password
