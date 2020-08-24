@@ -1,5 +1,6 @@
 package com.cj.cn.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.Getter;
@@ -67,8 +68,8 @@ public class Shipping {
     private String receiverZip;
 
     @Column(name = "create_time")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     @Column(name = "update_time")
-    private Date updateTime;
+    private LocalDateTime updateTime;
 }

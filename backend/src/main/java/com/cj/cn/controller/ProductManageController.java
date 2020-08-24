@@ -44,4 +44,17 @@ public class ProductManageController {
             return ResultResponse.error("无权限操作, 需要管理员权限");
         }
     }
+
+    public ResultResponse getDetail(HttpSession session, Integer productId) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResultResponse.error(ResponseCode.NEED_LOGIN.getCode(), "用户未登录, 请登录");
+        }
+
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            return null;
+        } else {
+            return ResultResponse.error("无权限操作, 需要管理员权限");
+        }
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -45,7 +46,7 @@ public class UserServiceImpl implements IUserService {
         if (!response.isSuccess()) {
             response = checkValid(user.getEmail(), Const.EMAIL);
             if (!response.isSuccess()) {
-                user.setRole(Const.Role.ROLE_CUSTOMER).setCreateTime(new Date()).setUpdateTime(new Date());
+                user.setRole(Const.Role.ROLE_CUSTOMER).setCreateTime(LocalDateTime.now()).setUpdateTime(LocalDateTime.now());
 //                user.setPassword(MD5Util.MD5EncodeUtf8(user.getPassword()));    //将密码加密写入数据库
                 int resultCount = userMapper.insert(user);
                 if (resultCount == 0) {

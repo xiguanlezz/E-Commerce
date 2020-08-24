@@ -1,18 +1,25 @@
 package com.cj.cn.service.impl;
 
+import com.cj.cn.entity.Category;
 import com.cj.cn.entity.Product;
+import com.cj.cn.mapper.CategoryMapper;
 import com.cj.cn.mapper.ProductMapper;
 import com.cj.cn.response.ResponseCode;
 import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.IProductService;
+import com.cj.cn.vo.ProductDetailVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service("iProductService")
 public class ProductServiceImpl implements IProductService {
     @Autowired
     private ProductMapper productMapper;
+    @Autowired
+    private CategoryMapper categoryMapper;
 
     @Override
     public ResultResponse saveOrUpdateProduct(Product product) {
@@ -58,5 +65,23 @@ public class ProductServiceImpl implements IProductService {
         } else {
             return ResultResponse.error("修改产品销售状态失败");
         }
+    }
+
+    public ResultResponse manageProductDetail(Integer productId) {
+        if (productId == null) {
+            return ResultResponse.error(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if (product == null) {
+            return ResultResponse.error("产品已下架或删除");
+        }
+        //简单对象直接用VO, 复杂业务ENTITY -> BO -> VO
+//        ProductDetailVO productDetailVO
+//        if (product != null) {
+//            Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+//            Integer parentId = category.getParentId();
+//        }
+        //TODO 转为VO对象
+        return null;
     }
 }

@@ -1,6 +1,7 @@
 package com.cj.cn.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.*;
 import lombok.Getter;
@@ -72,11 +73,11 @@ public class Product {
      * 创建时间
      */
     @Column(name = "create_time")
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 更新时间
      */
     @Column(name = "update_time")
-    private Date updateTime;
+    private LocalDateTime updateTime;
 }

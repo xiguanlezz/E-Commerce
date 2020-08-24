@@ -1,5 +1,6 @@
 package com.cj.cn.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import javax.persistence.*;
 
@@ -52,14 +53,14 @@ public class User {
      * 创建时间
      */
     @Column(name = "create_time")   //指定数据库表中对应的字段, 默认是去掉驼峰
-    private Date createTime;
+    private LocalDateTime createTime;
 
     /**
      * 最后一次更新时间
      */
     @Column(name = "update_time")
-    private Date updateTime;
+    private LocalDateTime updateTime;
 
-    @Transient
+    @Transient  //表示该字段不是要映射到数据库表中的字段
     private String test;
 }

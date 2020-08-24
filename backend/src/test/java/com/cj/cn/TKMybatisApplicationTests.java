@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 import tk.mybatis.mapper.entity.Example;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class TKMybatisApplicationTests {
     @Test
     public void testInsert() {
         User user = new User();
-        user.setUsername("xxyyx222").setPassword("111").setRole(0).setCreateTime(new Date()).setUpdateTime(new Date());
+        user.setUsername("xxyyx222333").setPassword("111").setRole(0).setCreateTime(LocalDateTime.now()).setUpdateTime(LocalDateTime.now());
         userMapper.insert(user);
         System.out.println(user.getId());
     }
@@ -71,7 +72,7 @@ public class TKMybatisApplicationTests {
     @Test
     public void testInsertSelective() {
         User user = new User();
-        user.setUsername("xxyyzz").setPassword("111").setRole(0).setCreateTime(new Date()).setUpdateTime(new Date());
+        user.setUsername("xxyyzz").setPassword("111").setRole(0).setCreateTime(LocalDateTime.now()).setUpdateTime(LocalDateTime.now());
         userMapper.insertSelective(user);       //为null的属性不加入sql语句
         System.out.println(user.getId());
     }

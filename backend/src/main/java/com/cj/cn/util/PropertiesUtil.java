@@ -15,6 +15,8 @@ public class PropertiesUtil {
     private static Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
     private static Properties props;
 
+    //静态代码块只执行一次
+    //每次new一个对象, 对象属性值先是默认值, 在根据普通代码块赋值, 最后才执行构造代码块的赋值
     static {
         String fileName = "mmall.properties";
         props = new Properties();
