@@ -8,11 +8,16 @@ import com.cj.cn.response.ResponseCode;
 import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.IProductService;
 import com.cj.cn.vo.ProductDetailVO;
+import com.cj.cn.vo.ProductListVO;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service("iProductService")
 public class ProductServiceImpl implements IProductService {
@@ -53,6 +58,7 @@ public class ProductServiceImpl implements IProductService {
         }
     }
 
+    @Override
     public ResultResponse setSaleStatus(Integer productId, Integer status) {
         if (productId == null || status == null) {
             return ResultResponse.error(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
@@ -67,6 +73,7 @@ public class ProductServiceImpl implements IProductService {
         }
     }
 
+    @Override
     public ResultResponse manageProductDetail(Integer productId) {
         if (productId == null) {
             return ResultResponse.error(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
@@ -76,12 +83,83 @@ public class ProductServiceImpl implements IProductService {
             return ResultResponse.error("产品已下架或删除");
         }
         //简单对象直接用VO, 复杂业务ENTITY -> BO -> VO
-//        ProductDetailVO productDetailVO
-//        if (product != null) {
-//            Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
-//            Integer parentId = category.getParentId();
-//        }
-        //TODO 转为VO对象
-        return null;
+        ProductDetailVO productDetailVO = copyProductDetailVOByProduct(product);
+        return ResultResponse.ok(productDetailVO);
     }
+
+    private ProductDetailVO copyProductDetailVOByProduct(Product product) {
+        if (product == null) {
+            return null;
+        } else {
+            ProductDetailVO productDetailVO = new ProductDetailVO();
+            productDetailVO.setId(product.getId());
+            productDetailVO.setCategoryId(product.getCategoryId());
+            productDetailVO.setName(product.getName());
+            productDetailVO.setSubtitle(product.getSubtitle());
+            productDetailVO.setMainImage(product.getMainImage());
+            productDetailVO.setSubImage(product.getSubImages());
+            productDetailVO.setDetail(product.getDetail());
+
+            productDetailVO.setPrice(product.getPrice());
+            productDetailVO.setStock(product.getStock());
+            productDetailVO.setStatus(product.getStatus());
+
+            Category category = categoryMapper.selectByPrimaryKey(product.getCategoryId());
+            if (category != null) {
+                productDetailVO.setParentCategoryId(category.getParentId());
+            }
+            return productDetailVO;
+        }
+    }
+
+    @Override
+    public ResultResponse getProductList(int pageNum, int pageSize) {
+        //PageHelper分页使用先start
+        PageHelper.startPage(pageNum, pageSize);
+        List<Product> productList = productMapper.selectList();
+
+        List<ProductListVO> productListVOList = new ArrayList<>();
+        for (Product product : productList) {
+            ProductListVO productListVO = copyProductListVOByProduct(product);
+            productListVOList.add(productListVO);
+        }
+
+        //最后PageHelper再收尾
+        PageInfo pageResult = new PageInfo(productList);
+        pageResult.setList(productListVOList);
+        return ResultResponse.ok(pageResult);
+    }
+
+    private ProductListVO copyProductListVOByProduct(Product product) {
+        if (product == null) {
+            return null;
+        } else {
+            ProductListVO productListVO = new ProductListVO();
+            productListVO.setId(product.getId());
+            productListVO.setCategoryId(product.getCategoryId());
+            productListVO.setName(product.getName());
+            productListVO.setSubtitle(product.getSubtitle());
+            productListVO.setMainImage(product.getMainImage());
+            productListVO.setPrice(product.getPrice());
+            productListVO.setStatus(product.getStatus());
+            return productListVO;
+        }
+    }
+
+    public ResultResponse searchProduct(String productName, Integer productId, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isNotBlank(productName)) {
+            productName = new StringBuilder().append("%").append(productName).append("%").toString();
+        }
+        List<Product> productList = productMapper.selectByNameAndProductId(productName, productId);
+
+        List<ProductListVO> productListVOList = new LinkedList<>();
+        for (Product product : productList) {
+            ProductListVO productListVO = copyProductListVOByProduct(product);
+            productListVOList.add(productListVO);
+        }
+        PageInfo pageResult = new PageInfo(productList);
+        pageResult.setList(productListVOList);
+        return ResultResponse.ok(pageResult);
+     }
 }
