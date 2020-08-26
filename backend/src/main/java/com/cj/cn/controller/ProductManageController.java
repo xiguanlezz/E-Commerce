@@ -7,6 +7,7 @@ import com.cj.cn.response.ResponseCode;
 import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.IProductService;
 import com.cj.cn.service.IUserService;
+import com.cj.cn.util.FastDFSClientUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +24,8 @@ public class ProductManageController {
     private IUserService iUserService;
     @Autowired
     private IProductService iProductService;
+    @Autowired
+    private FastDFSClientUtil fastDFSClient;
 
     @RequestMapping("save.do")
     public ResultResponse productSave(HttpSession session, Product product) {
@@ -67,7 +70,9 @@ public class ProductManageController {
     }
 
     @RequestMapping("list.do")
-    public ResultResponse getList(HttpSession session, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResultResponse getList(HttpSession session,
+                                  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                  @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResultResponse.error("用户未登录");
@@ -81,7 +86,9 @@ public class ProductManageController {
     }
 
     @RequestMapping("search.do")
-    public ResultResponse productSearch(HttpSession session, String productName, Integer productId, @RequestParam(value = "pageNum", defaultValue = "1") int pageNum, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    public ResultResponse productSearch(HttpSession session, String productName, Integer productId,
+                                        @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResultResponse.error("用户未登录");
@@ -94,8 +101,21 @@ public class ProductManageController {
         }
     }
 
-    public ResultResponse upload(MultipartFile file, HttpServletRequest request) {
-        String path = request.getSession().getServletContext().getRealPath("upload");
-        return null;
+    @RequestMapping("upload.do")
+    public ResultResponse upload(@RequestParam(value = "upload_file") MultipartFile file, HttpServletRequest request) {
+        String path = fastDFSClient.uploadBase64(file);
+        if ("".equals(path)) {
+            return ResultResponse.error("上传文件失败");
+        } else {
+            return ResultResponse.ok(path);
+        }
     }
+
+    /*
+    @RequestMapping("unUpload.do")
+    public ResultResponse unUpload(@RequestParam(value = "filePath", required = true) String path) {
+        fastDFSClient.deleteFile(path);
+        return ResultResponse.ok();
+    }
+    */
 }

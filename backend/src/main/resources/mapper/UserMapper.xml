@@ -34,7 +34,11 @@
   </select>
 
   <update id="updatePasswordByUsername">
-    UPDATE mmall_user SET password = #{password}, update_time = now() WHERE username = #{username}
+    UPDATE mmall_user SET
+    <if test="password != null">
+        password = #{password},
+    </if>
+    update_time = now() WHERE username = #{username}
   </update>
 
 </mapper>

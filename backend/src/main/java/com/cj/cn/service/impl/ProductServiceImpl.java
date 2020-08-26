@@ -1,5 +1,6 @@
 package com.cj.cn.service.impl;
 
+import com.cj.cn.common.Const;
 import com.cj.cn.entity.Category;
 import com.cj.cn.entity.Product;
 import com.cj.cn.mapper.CategoryMapper;
@@ -161,5 +162,36 @@ public class ProductServiceImpl implements IProductService {
         PageInfo pageResult = new PageInfo(productList);
         pageResult.setList(productListVOList);
         return ResultResponse.ok(pageResult);
-     }
+    }
+
+    @Override
+    public ResultResponse getProductDetail(Integer productId) {
+        if (productId == null) {
+            return ResultResponse.error(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if (product == null) {
+            return ResultResponse.error("产品已下架或删除");
+        }
+        if (product.getStatus() != Const.ProductStatusEnum.ON_SALE.getCode()) {
+            return ResultResponse.error("产品已下架或删除");
+        }
+        //简单对象直接用VO, 复杂业务ENTITY -> BO -> VO
+        ProductDetailVO productDetailVO = copyProductDetailVOByProduct(product);
+        return ResultResponse.ok(productDetailVO);
+    }
+
+    public ResultResponse getProductByKeywordCategory(String keyword, Integer categoryId) {
+        if (StringUtils.isBlank(keyword) && categoryId == null) {
+            return ResultResponse.error(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+        if (categoryId != null) {
+            Category category = categoryMapper.selectByPrimaryKey(categoryId);
+            if(category == null && StringUtils.isBlank(keyword)) {
+                //没有该分类并且没有关键字
+
+            }
+        }
+        return null;
+    }
 }

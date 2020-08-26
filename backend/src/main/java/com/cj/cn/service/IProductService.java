@@ -22,7 +22,7 @@ public interface IProductService {
     ResultResponse setSaleStatus(Integer productId, Integer status);
 
     /**
-     * 查看产品详情
+     * 查看产品详情(管理员端)
      *
      * @param productId 产品id
      * @return
@@ -47,4 +47,12 @@ public interface IProductService {
      * @return
      */
     ResultResponse searchProduct(String productName, Integer productId, int pageNum, int pageSize);
+
+    /**
+     * 查看产品详情
+     *
+     * @param productId 产品id
+     * @return
+     */
+    ResultResponse getProductDetail(Integer productId);
 }
