@@ -1,6 +1,6 @@
 package com.cj.cn.mapper;
 
-import com.cj.cn.entity.Product;
+import com.cj.cn.pojo.Product;
 import org.apache.ibatis.annotations.Param;
 import tk.mybatis.mapper.common.Mapper;
 

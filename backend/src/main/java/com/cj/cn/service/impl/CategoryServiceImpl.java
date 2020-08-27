@@ -1,6 +1,6 @@
 package com.cj.cn.service.impl;
 
-import com.cj.cn.entity.Category;
+import com.cj.cn.pojo.Category;
 import com.cj.cn.mapper.CategoryMapper;
 import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.ICategoryService;

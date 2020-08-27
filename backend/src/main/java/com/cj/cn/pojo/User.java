@@ -1,7 +1,6 @@
-package com.cj.cn.entity;
+package com.cj.cn.pojo;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import javax.persistence.*;
 
 import lombok.*;

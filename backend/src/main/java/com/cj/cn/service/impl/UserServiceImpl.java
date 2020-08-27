@@ -2,7 +2,7 @@ package com.cj.cn.service.impl;
 
 import com.cj.cn.common.Const;
 import com.cj.cn.common.TokenCache;
-import com.cj.cn.entity.User;
+import com.cj.cn.pojo.User;
 import com.cj.cn.mapper.UserMapper;
 import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.IUserService;

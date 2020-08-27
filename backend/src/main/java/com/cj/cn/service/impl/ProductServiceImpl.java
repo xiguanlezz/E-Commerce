@@ -1,8 +1,8 @@
 package com.cj.cn.service.impl;
 
 import com.cj.cn.common.Const;
-import com.cj.cn.entity.Category;
-import com.cj.cn.entity.Product;
+import com.cj.cn.pojo.Category;
+import com.cj.cn.pojo.Product;
 import com.cj.cn.mapper.CategoryMapper;
 import com.cj.cn.mapper.ProductMapper;
 import com.cj.cn.response.ResponseCode;
@@ -176,7 +176,7 @@ public class ProductServiceImpl implements IProductService {
         if (product.getStatus() != Const.ProductStatusEnum.ON_SALE.getCode()) {
             return ResultResponse.error("产品已下架或删除");
         }
-        //简单对象直接用VO, 复杂业务ENTITY -> BO -> VO
+        //简单对象直接用VO, 复杂业务POJO -> BO -> VO
         ProductDetailVO productDetailVO = copyProductDetailVOByProduct(product);
         return ResultResponse.ok(productDetailVO);
     }

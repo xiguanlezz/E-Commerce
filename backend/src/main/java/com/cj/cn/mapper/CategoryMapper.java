@@ -1,6 +1,6 @@
 package com.cj.cn.mapper;
 
-import com.cj.cn.entity.Category;
+import com.cj.cn.pojo.Category;
 import tk.mybatis.mapper.common.Mapper;
 
 import java.util.List;

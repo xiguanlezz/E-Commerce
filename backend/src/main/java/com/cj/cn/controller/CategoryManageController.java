@@ -1,7 +1,7 @@
 package com.cj.cn.controller;
 
 import com.cj.cn.common.Const;
-import com.cj.cn.entity.User;
+import com.cj.cn.pojo.User;
 import com.cj.cn.response.ResponseCode;
 import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.ICategoryService;

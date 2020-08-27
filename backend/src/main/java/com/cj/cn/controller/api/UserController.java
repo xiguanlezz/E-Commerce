@@ -1,7 +1,7 @@
 package com.cj.cn.controller.api;
 
 import com.cj.cn.common.Const;
-import com.cj.cn.entity.User;
+import com.cj.cn.pojo.User;
 import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;

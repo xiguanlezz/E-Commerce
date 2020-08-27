@@ -1,6 +1,6 @@
 package com.cj.cn;
 
-import com.cj.cn.entity.User;
+import com.cj.cn.pojo.User;
 import com.cj.cn.mapper.UserMapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import tk.mybatis.mapper.entity.Example;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @SpringBootTest(classes = StartApplication.class)

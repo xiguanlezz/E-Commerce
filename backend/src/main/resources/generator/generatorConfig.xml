@@ -22,7 +22,7 @@
         </jdbcConnection>
 
         <!--配置Java实体类的存放位置-->
-        <javaModelGenerator targetPackage="com.cj.cn.entity"
+        <javaModelGenerator targetPackage="com.cj.cn.pojo"
                             targetProject="src/main/java"/>
 
         <!--配置XxxMapper.xml的存放位置-->

@@ -49,7 +49,7 @@ public class FastDFSClientUtil {
      * 上传文件
      *
      * @param file 要上传的文件
-     * @return 文件存储路径(group1 / M00 / 00 / 00 / ...)
+     * @return 文件存储路径(group1/M00/00/00/...)
      */
     public String uploadBase64(MultipartFile file) {
         StorePath storePath = null;

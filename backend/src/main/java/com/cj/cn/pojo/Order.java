@@ -1,4 +1,4 @@
-package com.cj.cn.entity;
+package com.cj.cn.pojo;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
