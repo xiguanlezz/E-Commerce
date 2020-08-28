@@ -22,18 +22,18 @@ public interface ICategoryService {
     ResultResponse updateCategoryName(Integer categoryId, String categoryName);
 
     /**
-     * 得到一层子品类的信息
+     * 得到该品类下一层子品类的信息
      *
-     * @param parentId 父品类的id
+     * @param categoryId 品类的id
      * @return
      */
-    ResultResponse getParallelChildrenCategory(Integer parentId);
+    ResultResponse getParallelChildrenCategory(Integer categoryId);
 
     /**
-     * 递归得到本节点和所有子节点的id
+     * 递归得到本品类和该品类下所有子节点的id
      *
-     * @param parentId  父品类的id
+     * @param categoryId  品类的id
      * @return
      */
-    ResultResponse getDeepChildrenCategory(Integer parentId);
+    ResultResponse getDeepChildrenCategory(Integer categoryId);
 }

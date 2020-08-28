@@ -22,10 +22,10 @@ public interface IUserService {
     /**
      * 校验用户中某些参数的合法性
      *
-     * @param str  参数值
      * @param type 参数所属的类别
+     * @param str  参数值
      */
-    ResultResponse checkValid(String str, String type);
+    ResultResponse checkValid(String type, String str);
 
     /**
      * 返回用户的密保问题
@@ -71,7 +71,7 @@ public interface IUserService {
     /**
      * 检查是否是管理员
      *
-     * @param user  用户信息
+     * @param user 用户信息
      */
     ResultResponse checkAdminRole(User user);
 }

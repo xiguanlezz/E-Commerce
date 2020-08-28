@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,7 +31,8 @@ public class CategoryServiceImpl implements ICategoryService {
 
         Category category = new Category();
         //设置品类名字和父品类id以及表示这个品类是可用的
-        category.setName(categoryName).setParentId(parentId).setStatus(true);
+        category.setName(categoryName).setParentId(parentId).setStatus(true)
+                .setCreateTime(LocalDateTime.now()).setUpdateTime(LocalDateTime.now());     //设置时间
 
         int rowCount = categoryMapper.insert(category);
         if (rowCount > 0) {
@@ -46,7 +48,7 @@ public class CategoryServiceImpl implements ICategoryService {
             return ResultResponse.error("更新品类参数错误");
         }
         Category category = new Category();
-        category.setId(categoryId).setName(categoryName);
+        category.setId(categoryId).setName(categoryName).setUpdateTime(LocalDateTime.now());
         int rowCount = categoryMapper.updateByPrimaryKeySelective(category);
         if (rowCount > 0) {
             return ResultResponse.ok("更新品类名字成功");
@@ -56,8 +58,8 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public ResultResponse getParallelChildrenCategory(Integer parentId) {
-        List<Category> categoryList = categoryMapper.selectCategoryChildrenByParentId(parentId);
+    public ResultResponse getParallelChildrenCategory(Integer categoryId) {
+        List<Category> categoryList = categoryMapper.selectCategoryChildrenByParentId(categoryId);
         if (CollectionUtils.isEmpty(categoryList)) {
             logger.info("未找到当前分类的子分类");
         }
@@ -65,12 +67,12 @@ public class CategoryServiceImpl implements ICategoryService {
     }
 
     @Override
-    public ResultResponse getDeepChildrenCategory(Integer parentId) {
+    public ResultResponse getDeepChildrenCategory(Integer categoryId) {
         Set<Category> categorySet = new HashSet<>();
-        findChildCategory(categorySet, parentId);
+        findAllChildCategory(categorySet, categoryId);
 
         List<Integer> categoryIdList = new ArrayList<>();
-        if (parentId != null) {
+        if (categoryId != null) {
             for (Category category : categorySet) {
                 if (category != null) {
                     categoryIdList.add(category.getId());
@@ -84,9 +86,8 @@ public class CategoryServiceImpl implements ICategoryService {
      * 递归算法, 查询出本节点信息和所有子节点的信息
      * 方法的设计思想: 先将本节点加入集合, 在查找子节点依次调用本方法
      *
-     * @return
      */
-    private Set<Category> findChildCategory(Set<Category> categorySet, Integer categoryId) {
+    private Set<Category> findAllChildCategory(Set<Category> categorySet, Integer categoryId) {
         Category category = categoryMapper.selectByPrimaryKey(categoryId);
         if (categoryId != null) {
             categorySet.add(category);
@@ -94,8 +95,7 @@ public class CategoryServiceImpl implements ICategoryService {
         List<Category> categoryList = (List<Category>) getParallelChildrenCategory(categoryId).getData();
         for (Category c : categoryList) {
             if (c != null) {
-                //递归查找子节点
-                findChildCategory(categorySet, c.getId());
+                findAllChildCategory(categorySet, c.getId());   //递归查找子节点
             }
         }
         return categorySet;

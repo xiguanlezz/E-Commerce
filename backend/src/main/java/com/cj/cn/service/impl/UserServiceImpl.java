@@ -8,6 +8,7 @@ import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.IUserService;
 import com.cj.cn.util.MD5Util;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tomcat.jni.Local;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -23,7 +24,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultResponse login(String username, String password) {
-        ResultResponse response = checkValid(username, Const.USERNAME);
+        ResultResponse response = checkValid(Const.USERNAME, username);
         if (response.isSuccess()) {   //用户名存在方可登录
             String md5Password = MD5Util.MD5EncodeUtf8(password);   //对密码进行MD5加密之后去库中匹配
             User user = userMapper.selectOne(new User().setUsername(username).setPassword(password));
@@ -60,7 +61,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResultResponse checkValid(String str, String type) {
+    public ResultResponse checkValid(String type, String str) {
         if (StringUtils.isBlank(type)) {
             return ResultResponse.error("参数不合法");
         }
@@ -83,7 +84,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultResponse selectQuestion(String username) {
-        ResultResponse response = this.checkValid(username, Const.USERNAME);
+        ResultResponse response = this.checkValid(Const.USERNAME, username);
         if (response.isSuccess()) {
             String question = userMapper.selectQuestionByUsername(username);
             if (StringUtils.isNotBlank(question)) {
@@ -117,7 +118,7 @@ public class UserServiceImpl implements IUserService {
         if (StringUtils.isBlank(forgetToken)) {
             return ResultResponse.error("参数错误, 需要传递token");
         }
-        ResultResponse response = this.checkValid(username, Const.USERNAME);
+        ResultResponse response = this.checkValid(Const.USERNAME, username);
         if (!response.isSuccess()) {
             return ResultResponse.error(response.getMsg());
         }
@@ -140,7 +141,7 @@ public class UserServiceImpl implements IUserService {
         Example example = new Example(User.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("id", id).andEqualTo("password", passwordOld);  //拼接查询条件
-        int updateCount = userMapper.updateByExampleSelective(new User().setPassword(passwordNew), example);
+        int updateCount = userMapper.updateByExampleSelective(new User().setPassword(passwordNew).setUpdateTime(LocalDateTime.now()), example);
         if (updateCount > 0) {
             return ResultResponse.ok("密码修改成功");
         } else {
@@ -161,6 +162,7 @@ public class UserServiceImpl implements IUserService {
                 return ResultResponse.error("此邮箱已被注册");
             }
         }
+        user.setUpdateTime(LocalDateTime.now());    //将当前时间设置为最后更新时间
         int updateCount = userMapper.updateByPrimaryKeySelective(user);
         if (updateCount > 0) {
             return ResultResponse.ok("更新用户信息成功");

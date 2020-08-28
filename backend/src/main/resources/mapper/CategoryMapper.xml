@@ -15,6 +15,6 @@
   </resultMap>
 
   <select id="selectCategoryChildrenByParentId" resultType="com.cj.cn.pojo.Category">
-    SELECT id, parent_id, name FROM mmall_category WHERE parent_id = #{id}
+    SELECT id, parent_id, `name`, status FROM mmall_category WHERE parent_id = #{id}
   </select>
 </mapper>

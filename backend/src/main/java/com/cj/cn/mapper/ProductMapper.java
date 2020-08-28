@@ -9,5 +9,5 @@ import java.util.List;
 public interface ProductMapper extends Mapper<Product> {
     List<Product> selectList();
 
-    List<Product> selectByNameAndProductId(@Param("productName") String productName, @Param("productId") Integer productId);
+    List<Product> selectLikeNameOrByProductId(@Param("productName") String productName, @Param("productId") Integer productId);
 }

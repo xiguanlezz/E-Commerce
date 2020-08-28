@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,7 @@ public class ProductServiceImpl implements IProductService {
         int rowCount = -1;
         //用productId区分是更新还是新增
         if (product.getId() != null) {
+            product.setUpdateTime(LocalDateTime.now());     //重新设置当前时间为最后更新时间
             rowCount = productMapper.updateByPrimaryKeySelective(product);
             if (rowCount > 0) {
                 return ResultResponse.ok("更新产品成功");
@@ -50,6 +52,7 @@ public class ProductServiceImpl implements IProductService {
             }
 
         } else {
+            product.setCreateTime(LocalDateTime.now()).setUpdateTime(LocalDateTime.now());  //插入产品的时候设置创建时间和最后更新时间为当前时间
             rowCount = productMapper.insert(product);
             if (rowCount > 0) {
                 return ResultResponse.ok("新增产品成功");
@@ -152,7 +155,7 @@ public class ProductServiceImpl implements IProductService {
         if (StringUtils.isNotBlank(productName)) {
             productName = new StringBuilder().append("%").append(productName).append("%").toString();
         }
-        List<Product> productList = productMapper.selectByNameAndProductId(productName, productId);
+        List<Product> productList = productMapper.selectLikeNameOrByProductId(productName, productId);
 
         List<ProductListVO> productListVOList = new LinkedList<>();
         for (Product product : productList) {
@@ -187,7 +190,7 @@ public class ProductServiceImpl implements IProductService {
         }
         if (categoryId != null) {
             Category category = categoryMapper.selectByPrimaryKey(categoryId);
-            if(category == null && StringUtils.isBlank(keyword)) {
+            if (category == null && StringUtils.isBlank(keyword)) {
                 //没有该分类并且没有关键字
 
             }

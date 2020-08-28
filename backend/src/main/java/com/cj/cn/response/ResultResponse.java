@@ -64,19 +64,19 @@ public class ResultResponse implements Serializable {
         return new ResultResponse(ResponseCode.SUCCESS.getCode(), successMsg);
     }
 
-    public static <T> ResultResponse ok(String msg, Object data) {
+    public static ResultResponse ok(String msg, Object data) {
         return new ResultResponse(ResponseCode.SUCCESS.getCode(), msg, data);
     }
 
-    public static <T> ResultResponse error(String errorMsg) {
+    public static ResultResponse error(String errorMsg) {
         return new ResultResponse(ResponseCode.ERROR.getCode(), errorMsg);
     }
 
-    public static <T> ResultResponse error(int errorCode, String errorMsg) {
-        return new ResultResponse(ResponseCode.ERROR.getCode());
+    public static ResultResponse error(int errorCode, String errorMsg) {
+        return new ResultResponse(ResponseCode.ERROR.getCode(), errorMsg);
     }
 
-    public static <T> ResultResponse error(ResponseCode responseCode) {
+    public static ResultResponse error(ResponseCode responseCode) {
         return new ResultResponse(responseCode.getCode(), responseCode.getDesc());
     }
 }

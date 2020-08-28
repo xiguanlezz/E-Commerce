@@ -10,6 +10,7 @@ import lombok.Setter;
 @Table(name = "mmall_shipping")
 public class Shipping {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)     //返回自增的主键
     private Integer id;
 
     /**

@@ -23,10 +23,10 @@
     SELECT * FROM mmall_product ORDER BY id asc
   </select>
 
-  <select id="selectByNameAndProductId" resultType="com.cj.cn.pojo.Product">
+  <select id="selectLikeNameOrByProductId" resultType="com.cj.cn.pojo.Product">
     SELECT * FROM mmall_product
     <where>
-      <if test="productName != null">
+      <if test="productName != null and !''.equals(productName)">
         AND `name` LIKE #{productName}
       </if>
       <if test="productId != null">

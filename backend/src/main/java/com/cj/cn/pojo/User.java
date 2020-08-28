@@ -3,60 +3,49 @@ package com.cj.cn.pojo;
 import java.time.LocalDateTime;
 import javax.persistence.*;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+@ApiModel("用户实体类")
 @Getter
 @Setter
 @ToString
 @Accessors(chain = true)
 @Table(name = "mmall_user")   //通用mapper默认查询的表名是实体类类名首字母小写
 public class User {
-    /**
-     * 用户表id
-     */
+    @ApiModelProperty("用户id")
     @Id     //如果没有使用这个注解则默认将实体类中的所有字段当做联合主键
     @GeneratedValue(strategy = GenerationType.IDENTITY)     //返回自增的主键
     private Integer id;
 
-    /**
-     * 用户名
-     */
+    @ApiModelProperty("用户名(唯一)")
     private String username;
 
-    /**
-     * 用户密码，MD5加密
-     */
+    @ApiModelProperty("用户密码, MD5加密")
     private String password;
 
+    @ApiModelProperty("用户邮箱(唯一)")
     private String email;
 
+    @ApiModelProperty("用户手机号")
     private String phone;
 
-    /**
-     * 找回密码问题
-     */
+    @ApiModelProperty("用户找回密码的问题")
     private String question;
 
-    /**
-     * 找回密码答案
-     */
+    @ApiModelProperty("用户找回密码问题的答案")
     private String answer;
 
-    /**
-     * 角色0-管理员,1-普通用户
-     */
+    @ApiModelProperty("用户角色标记位, 0表示管理员, 1表示普通用户")
     private Integer role;
 
-    /**
-     * 创建时间
-     */
+    @ApiModelProperty("用户创建时间")
     @Column(name = "create_time")   //指定数据库表中对应的字段, 默认是去掉驼峰
     private LocalDateTime createTime;
 
-    /**
-     * 最后一次更新时间
-     */
+    @ApiModelProperty("用户最后更新时间")
     @Column(name = "update_time")
     private LocalDateTime updateTime;
 

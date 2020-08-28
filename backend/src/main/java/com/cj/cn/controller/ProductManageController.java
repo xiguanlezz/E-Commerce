@@ -8,15 +8,17 @@ import com.cj.cn.response.ResultResponse;
 import com.cj.cn.service.IProductService;
 import com.cj.cn.service.IUserService;
 import com.cj.cn.util.FastDFSClientUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+@Api(tags = "后台产品模块")
 @RestController
 @RequestMapping("/manage/product/")
 public class ProductManageController {
@@ -27,8 +29,9 @@ public class ProductManageController {
     @Autowired
     private FastDFSClientUtil fastDFSClient;
 
-    @RequestMapping("save.do")
-    public ResultResponse productSave(HttpSession session, Product product) {
+    @ApiOperation(value = "新增产品和更新产品信息的接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台新增产品和更新产品信息的统一接口")
+    @PostMapping("save.do")
+    public ResultResponse productSave(Product product, HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResultResponse.error(ResponseCode.NEED_LOGIN.getCode(), "用户未登录, 请登录");
@@ -41,8 +44,15 @@ public class ProductManageController {
         }
     }
 
-    @RequestMapping("set_sale_status.do")
-    public ResultResponse setSaleStatus(HttpSession session, Integer productId, Integer status) {
+    @ApiOperation(value = "上下架产品的接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台上架下架商品的接口")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "productId", value = "产品id"),
+            @ApiImplicitParam(name = "status", value = "要设置的产品状态")
+    })
+    @PostMapping("set_sale_status.do")
+    public ResultResponse setSaleStatus(@RequestParam("productId") Integer productId,
+                                        @RequestParam("status") Integer status,
+                                        HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResultResponse.error(ResponseCode.NEED_LOGIN.getCode(), "用户未登录, 请登录");
@@ -55,8 +65,11 @@ public class ProductManageController {
         }
     }
 
-    @RequestMapping("detail.do")
-    public ResultResponse getDetail(HttpSession session, Integer productId) {
+    @ApiOperation(value = "查看商品详情接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台查看商品详情(上架状态、下架状态都可看到)")
+    @ApiImplicitParam(name = "productId", value = "商品id")
+    @PostMapping("detail.do")
+    public ResultResponse getDetail(@RequestParam("productId") Integer productId,
+                                    HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResultResponse.error(ResponseCode.NEED_LOGIN.getCode(), "用户未登录, 请登录");
@@ -69,10 +82,15 @@ public class ProductManageController {
         }
     }
 
-    @RequestMapping("list.do")
-    public ResultResponse getList(HttpSession session,
-                                  @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                                  @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+    @ApiOperation(value = "查看商品列表接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台分页查看商品列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "pageNum", value = "当前页"),
+            @ApiImplicitParam(name = "pageSize", value = "页容量")
+    })
+    @PostMapping("list.do")
+    public ResultResponse getList(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+                                  @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                  HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResultResponse.error("用户未登录");
@@ -85,10 +103,19 @@ public class ProductManageController {
         }
     }
 
-    @RequestMapping("search.do")
-    public ResultResponse productSearch(HttpSession session, String productName, Integer productId,
+    @ApiOperation(value = "搜索产品接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台分页查看商品列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "productName", value = "产品名"),
+            @ApiImplicitParam(name = "productId", value = "产品id"),
+            @ApiImplicitParam(name = "pageNum", value = "当前页"),
+            @ApiImplicitParam(name = "pageSize", value = "页容量")
+    })
+    @PostMapping("search.do")
+    public ResultResponse productSearch(@RequestParam(value = "productName", defaultValue = "") String productName,
+                                        @RequestParam(value = "productId", required = false) Integer productId,
                                         @RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
-                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+                                        @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
+                                        HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResultResponse.error("用户未登录");
@@ -101,8 +128,10 @@ public class ProductManageController {
         }
     }
 
-    @RequestMapping("upload.do")
-    public ResultResponse upload(@RequestParam(value = "upload_file") MultipartFile file, HttpServletRequest request) {
+    @ApiOperation(value = "上传图片接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台上传产品图片到服务器")
+    @ApiImplicitParam(name = "upload_file", value = "待上传的图片文件")
+    @PostMapping("upload.do")
+    public ResultResponse upload(@RequestParam(value = "upload_file") MultipartFile file) {
         String path = fastDFSClient.uploadBase64(file);
         if ("".equals(path)) {
             return ResultResponse.error("上传文件失败");
@@ -111,11 +140,11 @@ public class ProductManageController {
         }
     }
 
-    /*
-    @RequestMapping("unUpload.do")
-    public ResultResponse unUpload(@RequestParam(value = "filePath", required = true) String path) {
+    @ApiOperation(value = "删除图片接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台上传产品图片到服务器")
+    @ApiImplicitParam(name = "upload_file", value = "待上传的图片文件")
+    @DeleteMapping("unUpload.do")
+    public ResultResponse unUpload(@RequestParam(value = "filePath") String path) {
         fastDFSClient.deleteFile(path);
         return ResultResponse.ok();
     }
-    */
 }
