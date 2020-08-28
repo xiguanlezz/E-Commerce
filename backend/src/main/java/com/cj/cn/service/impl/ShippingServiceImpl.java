@@ -3,11 +3,9 @@ package com.cj.cn.service.impl;
 import com.cj.cn.mapper.ShippingMapper;
 import com.cj.cn.pojo.Shipping;
 import com.cj.cn.response.ResultResponse;
-import com.cj.cn.service.IShoppingService;
-import com.github.pagehelper.Page;
+import com.cj.cn.service.IShippingService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -17,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service("iShoppingService")
-public class ShoppingServiceImpl implements IShoppingService {
+public class ShippingServiceImpl implements IShippingService {
     @Autowired
     private ShippingMapper shippingMapper;
 
@@ -76,6 +74,7 @@ public class ShoppingServiceImpl implements IShoppingService {
         }
     }
 
+    @Override
     public ResultResponse list(Integer userId, int pageNum, int pageSize) {
         PageHelper.startPage(pageNum, pageSize);    //PageHelper分页使用先start
         Example example = new Example(Shipping.class);

@@ -4,7 +4,7 @@ import com.cj.cn.common.Const;
 import com.cj.cn.pojo.Shipping;
 import com.cj.cn.pojo.User;
 import com.cj.cn.response.ResultResponse;
-import com.cj.cn.service.IShoppingService;
+import com.cj.cn.service.IShippingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +12,9 @@ import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/shipping/")
-public class ShoppingController {
+public class ShippingController {
     @Autowired
-    private IShoppingService iShoppingService;
+    private IShippingService iShoppingService;
 
     @PostMapping("add.do")
     public ResultResponse add(Shipping shipping, HttpSession session) {
@@ -35,12 +35,12 @@ public class ShoppingController {
     }
 
     @PutMapping("update.do")
-    public ResultResponse update(Integer shippingId, HttpSession session) {
+    public ResultResponse update(Shipping shipping, HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ResultResponse.error("用户未登录");
         }
-        return iShoppingService.del(user.getId(), shippingId);
+        return iShoppingService.update(user.getId(), shipping);
     }
 
     @GetMapping("select.do")
@@ -49,7 +49,7 @@ public class ShoppingController {
         if (user == null) {
             return ResultResponse.error("用户未登录");
         }
-        return iShoppingService.del(user.getId(), shippingId);
+        return iShoppingService.select(user.getId(), shippingId);
     }
 
     @GetMapping("list.do")

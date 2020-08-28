@@ -3,7 +3,7 @@ package com.cj.cn.service;
 import com.cj.cn.pojo.Shipping;
 import com.cj.cn.response.ResultResponse;
 
-public interface IShoppingService {
+public interface IShippingService {
     /**
      * 新增一个地址
      *
@@ -43,5 +43,5 @@ public interface IShoppingService {
      * @param pageNum  当前页
      * @param pageSize 页容量
      */
-    public ResultResponse list(Integer userId, int pageNum, int pageSize);
+    ResultResponse list(Integer userId, int pageNum, int pageSize);
 }
