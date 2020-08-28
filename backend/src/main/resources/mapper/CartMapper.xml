@@ -13,4 +13,15 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+  <select id="selectCartProductVOListByUserId" resultType="com.cj.cn.vo.CartProductVO">
+    SELECT ct1.id, ct1.user_id, ct1.product_id, ct1.quantity,
+            pt1.name as product_name, pt1.subtitle as product_subtitle,
+            pt1.main_image as product_main_image, pt1.price as product_price,
+            pt1.status as status, pt1.stock as stock, ct1.checked as product_checked
+    FROM mmall_cart ct1
+    JOIN mmall_product pt1
+    ON ct1.product_id = pt1.id
+    WHERE user_id = #{userId}
+  </select>
 </mapper>
