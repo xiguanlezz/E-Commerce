@@ -17,4 +17,12 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+  <insert id="batchInsert">
+    INSERT INTO mmall_orderitem(user_id, order_no, product_id, product_name, product_image, current_unit_price, quantity, total_price, create_time, update_time)
+    VALUES
+    <foreach collection="orderItemList" item="item" separator=",">
+      (#{userId}, #{orderNo}, #{productId}, #{productName}, #{productImage}, #{currentUnitPrice}, #{quantity}, #{totalPrice}, now(), now())
+    </foreach>
+  </insert>
 </mapper>
