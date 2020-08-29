@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 
-@Api(tags = "前台用户模块")
+@Api(tags = "用户模块")
 @RestController
 @RequestMapping("/user/")
 public class UserController {

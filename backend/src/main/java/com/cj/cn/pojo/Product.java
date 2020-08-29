@@ -18,12 +18,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Table(name = "mmall_product")
 public class Product {
-    @ApiModelProperty("商品id")
+    @ApiModelProperty(value = "商品id", example = "26")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)     //返回自增的主键
     private Integer id;
 
-    @ApiModelProperty("分类id(对应mmall_category表的主键)")
+    @ApiModelProperty(value = "分类id(对应mmall_category表的主键)", example = "100002")
     @Column(name = "category_id")
     private Integer categoryId;
 
@@ -44,13 +44,13 @@ public class Product {
     @ApiModelProperty("商品详情")
     private String detail;
 
-    @ApiModelProperty("价格,单位-元保留两位小数")
+    @ApiModelProperty(value = "价格,单位-元保留两位小数", example = "6999.00")
     private BigDecimal price;
 
-    @ApiModelProperty("库存数量")
+    @ApiModelProperty(value = "库存数量", example = "9994")
     private Integer stock;
 
-    @ApiModelProperty("商品状态.1-在售 2-下架 3-删除")
+    @ApiModelProperty(value = "商品状态.1-在售 2-下架 3-删除", example = "1")
     private Integer status;
 
     @ApiModelProperty("产品创建时间")

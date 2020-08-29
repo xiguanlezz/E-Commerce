@@ -87,7 +87,7 @@ public class ProductServiceImpl implements IProductService {
             return ResultResponse.error("产品已下架或删除");
         }
         //简单对象直接用VO, 复杂业务ENTITY -> BO -> VO
-        ProductDetailVO productDetailVO = copyProductDetailVOByProduct(product);
+        ProductDetailVO productDetailVO = this.copyProductDetailVOByProduct(product);
         return ResultResponse.ok(productDetailVO);
     }
 
@@ -124,7 +124,7 @@ public class ProductServiceImpl implements IProductService {
 
         List<ProductListVO> productListVOList = new ArrayList<>();
         for (Product product : productList) {
-            ProductListVO productListVO = copyProductListVOByProduct(product);
+            ProductListVO productListVO = this.copyProductListVOByProduct(product);
             productListVOList.add(productListVO);
         }
 
@@ -159,7 +159,7 @@ public class ProductServiceImpl implements IProductService {
 
         List<ProductListVO> productListVOList = new LinkedList<>();
         for (Product product : productList) {
-            ProductListVO productListVO = copyProductListVOByProduct(product);
+            ProductListVO productListVO = this.copyProductListVOByProduct(product);
             productListVOList.add(productListVO);
         }
         PageInfo pageResult = new PageInfo(productList);
@@ -180,7 +180,7 @@ public class ProductServiceImpl implements IProductService {
             return ResultResponse.error("产品已下架或删除");
         }
         //简单对象直接用VO, 复杂业务POJO -> BO -> VO
-        ProductDetailVO productDetailVO = copyProductDetailVOByProduct(product);
+        ProductDetailVO productDetailVO = this.copyProductDetailVOByProduct(product);
         return ResultResponse.ok(productDetailVO);
     }
 

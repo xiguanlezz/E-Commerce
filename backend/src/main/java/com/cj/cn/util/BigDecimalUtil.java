@@ -3,7 +3,7 @@ package com.cj.cn.util;
 import java.math.BigDecimal;
 
 /**
- * 为了
+ * 使用BigDecimal为了解决商业运算中浮点数丢失精度的问题
  */
 public class BigDecimalUtil {
     private BigDecimalUtil() {

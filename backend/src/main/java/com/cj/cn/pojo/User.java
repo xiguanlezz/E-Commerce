@@ -15,7 +15,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Table(name = "mmall_user")   //通用mapper默认查询的表名是实体类类名首字母小写
 public class User {
-    @ApiModelProperty("用户id")
+    @ApiModelProperty(value = "用户id", example = "13")    //使用example属性解决swagger的警告问题
     @Id     //如果没有使用这个注解则默认将实体类中的所有字段当做联合主键
     @GeneratedValue(strategy = GenerationType.IDENTITY)     //返回自增的主键
     private Integer id;
@@ -38,7 +38,7 @@ public class User {
     @ApiModelProperty("用户找回密码问题的答案")
     private String answer;
 
-    @ApiModelProperty("用户角色标记位, 0表示管理员, 1表示普通用户")
+    @ApiModelProperty(value = "用户角色标记位, 0表示管理员, 1表示普通用户", example = "1")
     private Integer role;
 
     @ApiModelProperty("用户创建时间")

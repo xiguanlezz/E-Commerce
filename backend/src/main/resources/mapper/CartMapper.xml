@@ -18,10 +18,37 @@
     SELECT ct1.id, ct1.user_id, ct1.product_id, ct1.quantity,
             pt1.name as product_name, pt1.subtitle as product_subtitle,
             pt1.main_image as product_main_image, pt1.price as product_price,
-            pt1.status as status, pt1.stock as stock, ct1.checked as product_checked
+            pt1.status as product_status, pt1.stock as product_stock, ct1.checked as product_checked
     FROM mmall_cart ct1
     JOIN mmall_product pt1
     ON ct1.product_id = pt1.id
     WHERE user_id = #{userId}
+  </select>
+
+  <select id="selectCartProductCheckedStatusByUserId" resultType="java.lang.Integer">
+    SELECT count(1) FROM mmall_cart WHERE checked = 0 AND user_id = #{userId}
+  </select>
+
+  <delete id="deleteByUserIdAndProductIds">
+    DELETE FROM mmall_cart WHERE user_id = #{userId}
+    <if test="productIdList != null">
+    AND product_id IN
+      <foreach collection="productIdList" open="(" close=")" separator="," item="pid">
+        #{pid}
+      </foreach>
+    </if>
+  </delete>
+
+  <update id="checkedOrUnCheckedProduct">
+    UPDATE mmall_cart
+    SET checked = #{checked}, update_time = now()
+    WHERE user_id =#{userId}
+    <if test="productId != null">
+      AND product_id = #{productId}
+    </if>
+  </update>
+
+  <select id="selectCartProductCount" resultType="java.lang.Integer">
+    SELECT IFNULL(sum(quantity), 0) AS `count` FROM mmall_cart WHERE user_id = #{userId}
   </select>
 </mapper>

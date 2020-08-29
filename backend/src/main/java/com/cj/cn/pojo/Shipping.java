@@ -18,12 +18,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Table(name = "mmall_shipping")
 public class Shipping {
+    @ApiModelProperty(value = "地址id", example = "4")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)     //返回自增的主键
-    @ApiModelProperty("地址id")
     private Integer id;
 
-    @ApiModelProperty("用户id")
+    @ApiModelProperty(value = "用户id", example = "13")
     @Column(name = "user_id")
     private Integer userId;
 

@@ -24,7 +24,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultResponse login(String username, String password) {
-        ResultResponse response = checkValid(Const.USERNAME, username);
+        ResultResponse response = this.checkValid(Const.USERNAME, username);
         if (response.isSuccess()) {   //用户名存在方可登录
             String md5Password = MD5Util.MD5EncodeUtf8(password);   //对密码进行MD5加密之后去库中匹配
             User user = userMapper.selectOne(new User().setUsername(username).setPassword(password));
@@ -40,9 +40,9 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultResponse register(User user) {
-        ResultResponse response = checkValid(user.getUsername(), Const.USERNAME);
+        ResultResponse response = this.checkValid(user.getUsername(), Const.USERNAME);
         if (!response.isSuccess()) {    //用户名必须唯一
-            response = checkValid(user.getEmail(), Const.EMAIL);
+            response = this.checkValid(user.getEmail(), Const.EMAIL);
             if (!response.isSuccess()) {    //邮箱必须唯一
                 user.setRole(Const.Role.ROLE_CUSTOMER).setCreateTime(LocalDateTime.now()).setUpdateTime(LocalDateTime.now());
 //                user.setPassword(MD5Util.MD5EncodeUtf8(user.getPassword()));    //将密码加密写入数据库

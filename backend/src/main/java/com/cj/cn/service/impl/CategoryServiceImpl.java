@@ -69,7 +69,7 @@ public class CategoryServiceImpl implements ICategoryService {
     @Override
     public ResultResponse getDeepChildrenCategory(Integer categoryId) {
         Set<Category> categorySet = new HashSet<>();
-        findAllChildCategory(categorySet, categoryId);
+        this.findAllChildCategory(categorySet, categoryId);
 
         List<Integer> categoryIdList = new ArrayList<>();
         if (categoryId != null) {
@@ -92,7 +92,7 @@ public class CategoryServiceImpl implements ICategoryService {
         if (categoryId != null) {
             categorySet.add(category);
         }
-        List<Category> categoryList = (List<Category>) getParallelChildrenCategory(categoryId).getData();
+        List<Category> categoryList = (List<Category>) this.getParallelChildrenCategory(categoryId).getData();
         for (Category c : categoryList) {
             if (c != null) {
                 findAllChildCategory(categorySet, c.getId());   //递归查找子节点

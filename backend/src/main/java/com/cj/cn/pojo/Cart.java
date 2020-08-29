@@ -17,23 +17,23 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Table(name = "mmall_cart")
 public class Cart {
-    @ApiModelProperty("购物车id")
+    @ApiModelProperty(value = "购物车id", example = "126")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)     //返回自增的主键
     private Integer id;
 
-    @ApiModelProperty("用户id")
+    @ApiModelProperty(value = "用户id", example = "13")
     @Column(name = "user_id")
     private Integer userId;
 
-    @ApiModelProperty("商品id")
+    @ApiModelProperty(value = "商品id", example = "26")
     @Column(name = "product_id")
     private Integer productId;
 
-    @ApiModelProperty("数量")
+    @ApiModelProperty(value = "数量", example = "1")
     private Integer quantity;
 
-    @ApiModelProperty("是否选择, 1=已勾选, 0=未勾选")
+    @ApiModelProperty(value = "是否选择, 1=已勾选, 0=未勾选", example = "1")
     private Integer checked;
 
     @ApiModelProperty("购物车创建时间")

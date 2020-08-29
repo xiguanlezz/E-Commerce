@@ -18,12 +18,12 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @Table(name = "mmall_category")
 public class Category {
-    @ApiModelProperty("类别Id")
+    @ApiModelProperty(value = "类别Id", example = "100020")
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)     //返回自增的主键
     private Integer id;
 
-    @ApiModelProperty("父类别id当id=0时说明是根节点, 一级类别")
+    @ApiModelProperty(value = "父类别id当id=0时说明是根节点, 一级类别", example = "0")
     @Column(name = "parent_id")
     private Integer parentId;
 
@@ -33,7 +33,7 @@ public class Category {
     @ApiModelProperty("类别状态: 1-正常, 2-已废弃")
     private Boolean status;
 
-    @ApiModelProperty("排序编号, 同类展示顺序, 数值相等则自然排序")
+    @ApiModelProperty(value = "排序编号, 同类展示顺序, 数值相等则自然排序", example = "1")
     @Column(name = "sort_order")
     private Integer sortOrder;
 
