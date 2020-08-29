@@ -14,6 +14,7 @@ import com.cj.cn.vo.ShippingVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.google.common.collect.Lists;
+import net.bytebuddy.asm.Advice;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class OrderServiceImpl implements IOrderService {
     public ResultResponse createOrder(Integer userId, Integer shippingId) {
         Example example = new Example(Cart.class);
         Example.Criteria criteria = example.createCriteria();
-        //查出所有用户勾选的购物车中的产品
+        //查出用户勾选的所有购物车记录
         criteria.andEqualTo("checked", 1).andEqualTo("userId", userId);
         List<Cart> cartList = cartMapper.selectByExample(example);
         ResultResponse response = this.getCartOrderItem(cartList);
@@ -57,7 +58,8 @@ public class OrderServiceImpl implements IOrderService {
         Order order = new Order();
         order.setOrderNo(this.generateOrderNo()).setUserId(userId).setShippingId(shippingId)
                 .setPayment(payment).setPaymentType(Const.PaymentTypeEnum.ONLINE_PAY.getCode())
-                .setStatus(Const.OrderStatusEnum.NO_PAY.getCode());
+                .setStatus(Const.OrderStatusEnum.NO_PAY.getCode())
+                .setCreateTime(LocalDateTime.now()).setUpdateTime(LocalDateTime.now());
         int rowCount = orderMapper.insert(order);
         if (rowCount == 0) {
             return ResultResponse.error("生成订单错误");
@@ -65,6 +67,9 @@ public class OrderServiceImpl implements IOrderService {
 
         if (CollectionUtils.isEmpty(orderItemList)) {
             return ResultResponse.ok("购物车为空");
+        }
+        for (OrderItem orderItem : orderItemList) {
+            orderItem.setOrderNo(order.getOrderNo());   //更新订单子表的订单号
         }
         orderItemMapper.batchInsert(orderItemList);
 
@@ -94,8 +99,8 @@ public class OrderServiceImpl implements IOrderService {
         orderVO.setPaymentTime(LocalDateTimeUtil.dateToStr(order.getPaymentTime()))
                 .setSendTime(LocalDateTimeUtil.dateToStr(order.getSendTime()))
                 .setEndTime(LocalDateTimeUtil.dateToStr(order.getEndTime()))
-                .setCreateTime(LocalDateTimeUtil.dateToStr(order.getCreateTime()))
-                .setCloseTime(LocalDateTimeUtil.dateToStr(order.getCloseTime()));
+                .setCloseTime(LocalDateTimeUtil.dateToStr(order.getCloseTime()))
+                .setCreateTime(LocalDateTimeUtil.dateToStr(order.getCreateTime()));
 
         List<OrderItemVO> orderItemVOList = new ArrayList<>();
         for (OrderItem orderItem : orderItemList) {
@@ -169,10 +174,10 @@ public class OrderServiceImpl implements IOrderService {
                 if (product.getStock() < cart.getQuantity()) {
                     return ResultResponse.error("产品" + product.getName() + "库存不足");
                 }
-                orderItem.setUserId(cart.getId()).setProductId(product.getId())
+                orderItem.setUserId(cart.getUserId()).setProductId(product.getId())
                         .setProductName(product.getName()).setProductImage(product.getMainImage())
                         .setCurrentUnitPrice(product.getPrice()).setQuantity(cart.getQuantity())
-                        .setTotalPrice(BigDecimalUtil.add(product.getPrice().doubleValue(), cart.getQuantity().doubleValue()));
+                        .setTotalPrice(BigDecimalUtil.mul(product.getPrice().doubleValue(), cart.getQuantity().doubleValue()));
                 orderItemList.add(orderItem);
             }
         }
@@ -192,7 +197,7 @@ public class OrderServiceImpl implements IOrderService {
             return ResultResponse.error("已付款, 无法取消订单");
         }
         Order updateOrder = new Order();
-        order.setId(order.getId()).setStatus(Const.OrderStatusEnum.CANCELED.getCode());
+        order.setId(order.getId()).setStatus(Const.OrderStatusEnum.CANCELED.getCode()).setUpdateTime(LocalDateTime.now());
         int rowCount = orderMapper.updateByPrimaryKeySelective(updateOrder);
         if (rowCount > 0) {
             return ResultResponse.ok();
@@ -236,7 +241,7 @@ public class OrderServiceImpl implements IOrderService {
             return ResultResponse.error("找不到该订单");
         }
 
-        Example exampleForOrderItem = new Example(Order.class);
+        Example exampleForOrderItem = new Example(OrderItem.class);
         Example.Criteria criteriaForOrderItem = exampleForOrder.createCriteria();
         criteriaForOrderItem.andEqualTo("orderNo", orderNo).andEqualTo("userId", userId);
         List<OrderItem> orderItemList = orderItemMapper.selectByExample(exampleForOrderItem);
@@ -299,7 +304,7 @@ public class OrderServiceImpl implements IOrderService {
             return ResultResponse.error("找不到该订单");
         }
 
-        Example exampleForOrderItem = new Example(Order.class);
+        Example exampleForOrderItem = new Example(OrderItem.class);
         Example.Criteria criteriaForOrderItem = exampleForOrder.createCriteria();
         criteriaForOrderItem.andEqualTo("orderNo", orderNo);
         List<OrderItem> orderItemList = orderItemMapper.selectByExample(exampleForOrderItem);
@@ -318,7 +323,7 @@ public class OrderServiceImpl implements IOrderService {
             return ResultResponse.error("找不到该订单");
         }
 
-        Example exampleForOrderItem = new Example(Order.class);
+        Example exampleForOrderItem = new Example(OrderItem.class);
         Example.Criteria criteriaForOrderItem = exampleForOrder.createCriteria();
         criteriaForOrderItem.andEqualTo("orderNo", orderNo);
         List<OrderItem> orderItemList = orderItemMapper.selectByExample(exampleForOrderItem);
@@ -340,8 +345,7 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         if (order.getStatus() == Const.OrderStatusEnum.PAID.getCode()) {
-            order.setStatus(Const.OrderStatusEnum.SHIPPED.getCode());
-            order.setSendTime(LocalDateTime.now());
+            order.setStatus(Const.OrderStatusEnum.SHIPPED.getCode()).setSendTime(LocalDateTime.now());
             orderMapper.updateByPrimaryKeySelective(order);
             return ResultResponse.ok("发货成功");
         } else {
