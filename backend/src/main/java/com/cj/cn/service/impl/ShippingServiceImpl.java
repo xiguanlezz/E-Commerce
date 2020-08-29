@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class ShippingServiceImpl implements IShippingService {
 
     @Override
     public ResultResponse add(Integer userId, Shipping shipping) {
-        shipping.setUserId(userId);
+        shipping.setUserId(userId).setCreateTime(LocalDateTime.now()).setUpdateTime(LocalDateTime.now());
         int rowCount = shippingMapper.insert(shipping);
         if (rowCount > 0) {
             Map<String, Integer> result = new HashMap();
@@ -36,7 +37,7 @@ public class ShippingServiceImpl implements IShippingService {
     public ResultResponse del(Integer userId, Integer shippingId) {
         Example example = new Example(Shipping.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userId", userId).andEqualTo("shippingId", shippingId);
+        criteria.andEqualTo("userId", userId).andEqualTo("id", shippingId);
         int resultCount = shippingMapper.deleteByExample(example);
         if (resultCount > 0) {
             return ResultResponse.ok("删除地址成功");
@@ -47,11 +48,8 @@ public class ShippingServiceImpl implements IShippingService {
 
     @Override
     public ResultResponse update(Integer userId, Shipping shipping) {
-        shipping.setUserId(userId);
-        Example example = new Example(Shipping.class);
-        Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userId", userId);
-        int rowCount = shippingMapper.updateByExampleSelective(shipping, example);
+        shipping.setUserId(userId).setUpdateTime(LocalDateTime.now());
+        int rowCount = shippingMapper.updateByShipping(shipping);
         if (rowCount > 0) {
             Map<String, Integer> result = new HashMap();
             result.put("shippingId", shipping.getId());
@@ -65,7 +63,7 @@ public class ShippingServiceImpl implements IShippingService {
     public ResultResponse select(Integer userId, Integer shippingId) {
         Example example = new Example(Shipping.class);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andEqualTo("userId", userId).andEqualTo("shippingId", shippingId);
+        criteria.andEqualTo("userId", userId).andEqualTo("id", shippingId);
         Shipping shipping = shippingMapper.selectOneByExample(example);
         if (shipping == null) {
             return ResultResponse.error("无法查询到该地址");

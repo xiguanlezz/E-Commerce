@@ -72,7 +72,7 @@ public class ProductServiceImpl implements IProductService {
             return ResultResponse.error(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
         Product product = new Product();
-        product.setId(productId).setStatus(status);
+        product.setId(productId).setStatus(status).setUpdateTime(LocalDateTime.now());
         int rowCount = productMapper.updateByPrimaryKeySelective(product);
         if (rowCount > 0) {
             return ResultResponse.ok("修改产品销售状态成功");

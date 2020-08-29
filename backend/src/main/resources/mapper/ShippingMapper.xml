@@ -18,4 +18,39 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+  <update id="updateByShipping">
+    UPDATE mmall_shipping
+    SET
+    <if test="receiverName!=null and !''.equals(receiverName)">
+        receiver_name = #{receiverName},
+    </if>
+    <if test="receiverPhone!=null and !''.equals(receiverPhone)">
+      receiver_phone = #{receiverPhone},
+    </if>
+    <if test="receiverMobile!=null and !''.equals(receiverMobile)">
+      receiver_mobile = #{receiverMobile},
+    </if>
+    <if test="receiverProvince!=null and !''.equals(receiverProvince)">
+      receiver_province = #{receiverProvince},
+    </if>
+    <if test="receiverCity!=null and !''.equals(receiverCity)">
+      receiver_city = #{receiverCity},
+    </if>
+    <if test="receiverDistrict!=null and !''.equals(receiverDistrict)">
+      receiver_district = #{receiverDistrict},
+    </if>
+    <if test="receiverAddress!=null and !''.equals(receiverAddress)">
+      receiver_address = #{receiverDistrict},
+    </if>
+    <if test="receiverZip!=null and !''.equals(receiverZip)">
+      receiver_zip = #{receiverZip},
+    </if>
+    <if test="createTime!=null and !''.equals(createTime)">
+      create_time = #{createTime},
+    </if>
+    update_time = now()
+    WHERE id = #{id}
+    AND user_id = #{userId}
+  </update>
 </mapper>

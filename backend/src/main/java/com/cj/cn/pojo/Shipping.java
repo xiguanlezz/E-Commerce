@@ -55,7 +55,6 @@ public class Shipping {
     @Column(name = "receiver_address")
     private String receiverAddress;
 
-
     @ApiModelProperty("邮编")
     @Column(name = "receiver_zip")
     private String receiverZip;

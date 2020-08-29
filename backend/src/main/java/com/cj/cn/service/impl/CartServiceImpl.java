@@ -65,7 +65,7 @@ public class CartServiceImpl implements ICartService {
         if (cart == null) {
             return ResultResponse.error("更新购物车中产品数量失败");
         }
-        cart.setQuantity(count);
+        cart.setQuantity(count).setUpdateTime(LocalDateTime.now());
         cartMapper.updateByPrimaryKeySelective(cart);
         return this.list(userId);
     }
