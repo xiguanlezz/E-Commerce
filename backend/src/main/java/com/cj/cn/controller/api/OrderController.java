@@ -72,7 +72,7 @@ public class OrderController {
             @ApiImplicitParam(name = "pageSize", value = "页容量"),
     })
     @GetMapping("list.do")
-    public ResultResponse detail(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
+    public ResultResponse list(@RequestParam(value = "pageNum", defaultValue = "1") int pageNum,
                                  @RequestParam(value = "pageSize", defaultValue = "10") int pageSize,
                                  HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);

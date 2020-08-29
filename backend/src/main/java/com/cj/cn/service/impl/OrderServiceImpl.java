@@ -13,12 +13,14 @@ import com.cj.cn.vo.OrderVO;
 import com.cj.cn.vo.ShippingVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -264,7 +266,7 @@ public class OrderServiceImpl implements IOrderService {
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("orderNo", order.getOrderNo());
             if (userId == null) {   //管理员查询的时候不传userId
-
+                orderItemList = orderItemMapper.selectByExample(example);
             } else {
                 criteria.andEqualTo("userId", userId);
                 orderItemList = orderItemMapper.selectByExample(example);
@@ -273,5 +275,77 @@ public class OrderServiceImpl implements IOrderService {
             orderVOList.add(orderVO);
         }
         return orderVOList;
+    }
+
+    @Override
+    public ResultResponse getManageOrderList(int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Example example = new Example(Order.class);
+        example.orderBy("createTime").desc();
+        List<Order> orderList = orderMapper.selectByExample(example);
+        List<OrderVO> orderVOList = this.copyOrderVOListByOrderList(null, orderList);
+        PageInfo pageInfo = new PageInfo(orderList);
+        pageInfo.setList(orderVOList);
+        return ResultResponse.ok(pageInfo);
+    }
+
+    @Override
+    public ResultResponse getManageDetail(Long orderNo) {
+        Example exampleForOrder = new Example(Order.class);
+        Example.Criteria criteriaForOrder = exampleForOrder.createCriteria();
+        criteriaForOrder.andEqualTo("orderNo", orderNo);
+        Order order = orderMapper.selectOneByExample(exampleForOrder);
+        if (order == null) {
+            return ResultResponse.error("找不到该订单");
+        }
+
+        Example exampleForOrderItem = new Example(Order.class);
+        Example.Criteria criteriaForOrderItem = exampleForOrder.createCriteria();
+        criteriaForOrderItem.andEqualTo("orderNo", orderNo);
+        List<OrderItem> orderItemList = orderItemMapper.selectByExample(exampleForOrderItem);
+        OrderVO orderVO = this.copyOrderVOByOrderAndOrderItemList(order, orderItemList);
+        return ResultResponse.ok(orderVO);
+    }
+
+    @Override
+    public ResultResponse getManageSearch(Long orderNo, int pageNum, int pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        Example exampleForOrder = new Example(Order.class);
+        Example.Criteria criteriaForOrder = exampleForOrder.createCriteria();
+        criteriaForOrder.andEqualTo("orderNo", orderNo);
+        Order order = orderMapper.selectOneByExample(exampleForOrder);
+        if (order == null) {
+            return ResultResponse.error("找不到该订单");
+        }
+
+        Example exampleForOrderItem = new Example(Order.class);
+        Example.Criteria criteriaForOrderItem = exampleForOrder.createCriteria();
+        criteriaForOrderItem.andEqualTo("orderNo", orderNo);
+        List<OrderItem> orderItemList = orderItemMapper.selectByExample(exampleForOrderItem);
+        OrderVO orderVO = this.copyOrderVOByOrderAndOrderItemList(order, orderItemList);
+
+        PageInfo pageResult = new PageInfo(Lists.newArrayList(order));
+        pageResult.setList(Lists.newArrayList(orderVO));
+        return ResultResponse.ok(pageResult);
+    }
+
+    @Override
+    public ResultResponse manageSendGoods(Long orderNo) {
+        Example example = new Example(Order.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("orderNo", orderNo);
+        Order order = orderMapper.selectOneByExample(example);
+        if (order == null) {
+            return ResultResponse.error("订单不存在");
+        }
+
+        if (order.getStatus() == Const.OrderStatusEnum.PAID.getCode()) {
+            order.setStatus(Const.OrderStatusEnum.SHIPPED.getCode());
+            order.setSendTime(LocalDateTime.now());
+            orderMapper.updateByPrimaryKeySelective(order);
+            return ResultResponse.ok("发货成功");
+        } else {
+            return ResultResponse.error("当前订单状态不是已付款状态, 无法发货");
+        }
     }
 }

@@ -42,4 +42,35 @@ public interface IOrderService {
      * @param pageSize 页容量
      */
     ResultResponse getOrderList(Integer userId, int pageNum, int pageSize);
+
+    /**
+     * 后台分页查询订单列表
+     *
+     * @param pageNum  当前页
+     * @param pageSize 页容量
+     */
+    ResultResponse getManageOrderList(int pageNum, int pageSize);
+
+    /**
+     * 后台查看订单详情
+     *
+     * @param orderNo 订单号
+     */
+    ResultResponse getManageDetail(Long orderNo);
+
+    /**
+     * 后台分页搜索订单
+     *
+     * @param orderNo  订单号
+     * @param pageNum  当前页
+     * @param pageSize 页容量
+     */
+    ResultResponse getManageSearch(Long orderNo, int pageNum, int pageSize);
+
+    /**
+     * 订单发货
+     *
+     * @param orderNo 订单号
+     */
+    ResultResponse manageSendGoods(Long orderNo);
 }
