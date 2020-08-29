@@ -7,11 +7,13 @@ import com.cj.cn.mapper.CategoryMapper;
 import com.cj.cn.mapper.ProductMapper;
 import com.cj.cn.response.ResponseCode;
 import com.cj.cn.response.ResultResponse;
+import com.cj.cn.service.ICategoryService;
 import com.cj.cn.service.IProductService;
 import com.cj.cn.vo.ProductDetailVO;
 import com.cj.cn.vo.ProductListVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,8 @@ public class ProductServiceImpl implements IProductService {
     private ProductMapper productMapper;
     @Autowired
     private CategoryMapper categoryMapper;
+    @Autowired
+    private ICategoryService iCategoryService;
 
     @Override
     public ResultResponse saveOrUpdateProduct(Product product) {
@@ -78,7 +82,7 @@ public class ProductServiceImpl implements IProductService {
     }
 
     @Override
-    public ResultResponse manageProductDetail(Integer productId) {
+    public ResultResponse getManageProductDetail(Integer productId) {
         if (productId == null) {
             return ResultResponse.error(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
@@ -129,8 +133,8 @@ public class ProductServiceImpl implements IProductService {
         }
 
         //最后PageHelper再收尾
-        PageInfo pageResult = new PageInfo(productList);
-        pageResult.setList(productListVOList);
+        PageInfo pageResult = new PageInfo(productList);    //将数据库查询结果作为入参传入构造函数
+        pageResult.setList(productListVOList);  //重新设置要分页的list
         return ResultResponse.ok(pageResult);
     }
 
@@ -184,17 +188,44 @@ public class ProductServiceImpl implements IProductService {
         return ResultResponse.ok(productDetailVO);
     }
 
-    public ResultResponse getProductByKeywordCategory(String keyword, Integer categoryId) {
+    @Override
+    public ResultResponse getProductByKeywordOrCategoryId(String keyword, Integer categoryId, int pageNum, int pageSize, String orderBy) {
         if (StringUtils.isBlank(keyword) && categoryId == null) {
             return ResultResponse.error(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
+
+        List<Integer> categoryIdList = new ArrayList<>();
         if (categoryId != null) {
             Category category = categoryMapper.selectByPrimaryKey(categoryId);
             if (category == null && StringUtils.isBlank(keyword)) {
-                //没有该分类并且没有关键字
-
+                //没有该分类并且没有传入关键字
+                PageHelper.startPage(pageNum, pageSize);
+                List<ProductListVO> productListVOList = new ArrayList<>();
+                PageInfo pageInfo = new PageInfo(productListVOList);
+                return ResultResponse.ok(pageInfo);
             }
+            categoryIdList = (List<Integer>) iCategoryService.getDeepChildrenCategory(categoryId).getData();
         }
-        return null;
+
+        if (StringUtils.isNotBlank(keyword)) {
+            keyword = new StringBuilder().append("%").append(keyword).append("%").toString();
+        }
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isNotBlank(orderBy))
+            if (Const.ProductListOrderBy.PRICE_ASC_DESC.contains(orderBy)) {
+                String[] orderByArray = orderBy.split("_");
+                PageHelper.orderBy(orderByArray[0] + " " + orderByArray[1]);
+            }
+        List<Product> productList = productMapper.selectLikeNameAndCategoryIds(
+                StringUtils.isBlank(keyword) ? null : keyword,
+                CollectionUtils.isEmpty(categoryIdList) ? null : categoryIdList);
+        List<ProductListVO> productListVOList = new ArrayList<>();
+        for (Product product : productList) {
+            ProductListVO productListVO = this.copyProductListVOByProduct(product);
+            productListVOList.add(productListVO);
+        }
+        PageInfo pageInfo = new PageInfo(productList);
+        pageInfo.setList(productListVOList);
+        return ResultResponse.ok(pageInfo);
     }
 }

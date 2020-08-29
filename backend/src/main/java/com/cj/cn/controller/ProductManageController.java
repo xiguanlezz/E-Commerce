@@ -16,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api(tags = "后台产品模块")
 @RestController
@@ -76,7 +79,7 @@ public class ProductManageController {
         }
 
         if (iUserService.checkAdminRole(user).isSuccess()) {
-            return iProductService.manageProductDetail(productId);
+            return iProductService.getManageProductDetail(productId);
         } else {
             return ResultResponse.error("无权限操作, 需要管理员权限");
         }
@@ -93,7 +96,7 @@ public class ProductManageController {
                                   HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
-            return ResultResponse.error("用户未登录");
+            return ResultResponse.error(ResponseCode.NEED_LOGIN.getCode(), "用户未登录, 请登录");
         }
 
         if (iUserService.checkAdminRole(user).isSuccess()) {
@@ -131,20 +134,72 @@ public class ProductManageController {
     @ApiOperation(value = "上传图片接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台上传产品图片到服务器")
     @ApiImplicitParam(name = "upload_file", value = "待上传的图片文件")
     @PostMapping("upload.do")
-    public ResultResponse upload(@RequestParam(value = "upload_file") MultipartFile file) {
-        String path = fastDFSClient.uploadBase64(file);
-        if ("".equals(path)) {
-            return ResultResponse.error("上传文件失败");
+    public ResultResponse upload(@RequestParam(value = "upload_file") MultipartFile file,
+                                 HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResultResponse.error(ResponseCode.NEED_LOGIN.getCode(), "用户未登录, 请登录");
+        }
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            String path = fastDFSClient.uploadBase64(file);
+            if ("".equals(path)) {
+                return ResultResponse.error("上传文件失败");
+            } else {
+                return ResultResponse.ok(path);
+            }
         } else {
-            return ResultResponse.ok(path);
+            return ResultResponse.error("无权限操作, 需要管理员权限");
         }
     }
 
     @ApiOperation(value = "删除图片接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台上传产品图片到服务器")
     @ApiImplicitParam(name = "upload_file", value = "待上传的图片文件")
     @DeleteMapping("unUpload.do")
-    public ResultResponse unUpload(@RequestParam(value = "filePath") String path) {
-        fastDFSClient.deleteFile(path);
-        return ResultResponse.ok();
+    public ResultResponse unUpload(@RequestParam(value = "filePath") String path,
+                                   HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ResultResponse.error(ResponseCode.NEED_LOGIN.getCode(), "用户未登录, 请登录");
+        }
+
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            fastDFSClient.deleteFile(path);
+            return ResultResponse.ok();
+        } else {
+            return ResultResponse.error("无权限操作, 需要管理员权限");
+        }
+    }
+
+    @ApiOperation(value = "富文本中图片上传接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;后台富文本中图片上传到服务器")
+    @ApiImplicitParam(name = "upload_file", value = "待上传的图片文件")
+    @PostMapping("richtext_img_upload.do")
+    public Map<String, Object> richtextImgUpload(@RequestParam(value = "upload_file") MultipartFile file,
+                                                 HttpServletResponse response,
+                                                 HttpSession session) {
+        Map<String, Object> resultMap = new HashMap<>();
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            resultMap.put("success", false);
+            resultMap.put("msg", "用户未登录, 请登录");
+            return resultMap;
+        }
+
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            //富文本中对于返回值有自己的要求, 使用的是simditor需要按照simditor的要求进行返回
+            String path = fastDFSClient.uploadBase64(file);
+            if ("".equals(path)) {
+                resultMap.put("success", false);
+                resultMap.put("msg", "上传失败");
+            } else {
+                resultMap.put("success", true);
+                resultMap.put("msg", "上传成功");
+                resultMap.put("file_path", path);
+                response.addHeader("Access-Control-Allow-Headers", "X-File-Name");
+            }
+        } else {
+            resultMap.put("success", false);
+            resultMap.put("msg", "无权限操作, 需要管理员权限");
+        }
+        return resultMap;
     }
 }
