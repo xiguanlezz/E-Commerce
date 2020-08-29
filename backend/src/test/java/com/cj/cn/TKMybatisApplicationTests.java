@@ -105,7 +105,7 @@ public class TKMybatisApplicationTests {
         example.selectProperties("username", "password", "role");    //设置select的字段
         example.setDistinct(true);      //设置去重
 
-        criteria01.andBetween("role", 0, 1).andEqualTo("username", "admin");
+        criteria01.andBetween("role", 0, 1).andEqualTo("username", "admin");    //第一个参数是实体类的属性名
         criteria02.andLessThan("id", 10);
         example.or(criteria02);     //拼接条件
         List<User> users = userMapper.selectByExample(example);
