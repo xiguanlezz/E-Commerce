@@ -13,7 +13,7 @@ import java.util.List;
 @ToString
 @Accessors(chain = true)
 public class OrderVO {
-    private long orderNo;
+    private Long orderNo;
     private BigDecimal payment;
     private Integer paymentType;
     private String paymentTypeDesc;

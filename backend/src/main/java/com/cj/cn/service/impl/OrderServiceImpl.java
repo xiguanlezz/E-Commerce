@@ -71,7 +71,7 @@ public class OrderServiceImpl implements IOrderService {
         for (OrderItem orderItem : orderItemList) {
             orderItem.setOrderNo(order.getOrderNo());   //更新订单子表的订单号
         }
-        orderItemMapper.batchInsert(orderItemList);
+        orderItemMapper.batchInsert(orderItemList);     //持久化到数据库
 
         //订单已生成, 需要减少库存
         this.reduceProductStock(orderItemList);
@@ -80,11 +80,11 @@ public class OrderServiceImpl implements IOrderService {
         this.cleanCart(cartList);
 
         //返回给前端数据
-        OrderVO orderVO = this.copyOrderVOByOrderAndOrderItemList(order, orderItemList);
+        OrderVO orderVO = this.assembleOrderVO(order, orderItemList);
         return ResultResponse.ok(orderVO);
     }
 
-    private OrderVO copyOrderVOByOrderAndOrderItemList(Order order, List<OrderItem> orderItemList) {
+    private OrderVO assembleOrderVO(Order order, List<OrderItem> orderItemList) {
         OrderVO orderVO = new OrderVO();
         orderVO.setOrderNo(order.getOrderNo()).setPayment(order.getPayment()).
                 setPaymentType(order.getPaymentType()).setPaymentTypeDesc(Const.PaymentTypeEnum.codeOf(order.getPaymentType()).getValue())
@@ -94,7 +94,7 @@ public class OrderServiceImpl implements IOrderService {
         Shipping shipping = shippingMapper.selectByPrimaryKey(order.getShippingId());
         if (shipping != null) {
             orderVO.setReceiverName(shipping.getReceiverName());
-            orderVO.setShippingVO(this.copyShippingVOByShipping(shipping));
+            orderVO.setShippingVO(this.assembleShippingVO(shipping));
         }
         orderVO.setPaymentTime(LocalDateTimeUtil.dateToStr(order.getPaymentTime()))
                 .setSendTime(LocalDateTimeUtil.dateToStr(order.getSendTime()))
@@ -104,23 +104,26 @@ public class OrderServiceImpl implements IOrderService {
 
         List<OrderItemVO> orderItemVOList = new ArrayList<>();
         for (OrderItem orderItem : orderItemList) {
-            OrderItemVO orderItemVO = this.copyOrderItemVOByOrderItem(orderItem);
+            OrderItemVO orderItemVO = this.assembleOrderItemVO(orderItem);
             orderItemVOList.add(orderItemVO);
         }
         orderVO.setOrderItemVOList(orderItemVOList);
         return orderVO;
     }
 
-    private OrderItemVO copyOrderItemVOByOrderItem(OrderItem orderItem) {
+    private OrderItemVO assembleOrderItemVO(OrderItem orderItem) {
         OrderItemVO orderItemVO = new OrderItemVO();
-        orderItemVO.setOrderNo(orderItem.getOrderNo()).setProductId(orderItem.getProductId())
+        if (orderItem.getOrderNo() != null) {
+            orderItemVO.setOrderNo(orderItem.getOrderNo());
+        }
+        orderItemVO.setProductId(orderItem.getProductId())
                 .setProductName(orderItem.getProductName()).setProductImage(orderItem.getProductImage())
                 .setCurrentUnitPrice(orderItem.getCurrentUnitPrice()).setQuantity(orderItem.getQuantity())
                 .setTotalPrice(orderItem.getTotalPrice()).setCreateTime(LocalDateTimeUtil.dateToStr(orderItem.getCreateTime()));
         return orderItemVO;
     }
 
-    private ShippingVO copyShippingVOByShipping(Shipping shipping) {
+    private ShippingVO assembleShippingVO(Shipping shipping) {
         ShippingVO shippingVO = new ShippingVO();
         shippingVO.setReceiverName(shipping.getReceiverName()).setReceiverPhone(shipping.getReceiverPhone())
                 .setReceiverMobile(shipping.getReceiverMobile()).setReceiverProvince(shipping.getReceiverProvince())
@@ -197,7 +200,7 @@ public class OrderServiceImpl implements IOrderService {
             return ResultResponse.error("已付款, 无法取消订单");
         }
         Order updateOrder = new Order();
-        order.setId(order.getId()).setStatus(Const.OrderStatusEnum.CANCELED.getCode()).setUpdateTime(LocalDateTime.now());
+        updateOrder.setId(order.getId()).setStatus(Const.OrderStatusEnum.CANCELED.getCode()).setUpdateTime(LocalDateTime.now());
         int rowCount = orderMapper.updateByPrimaryKeySelective(updateOrder);
         if (rowCount > 0) {
             return ResultResponse.ok();
@@ -223,7 +226,7 @@ public class OrderServiceImpl implements IOrderService {
         BigDecimal payment = new BigDecimal("0");
         for (OrderItem orderItem : orderItemList) {
             payment = BigDecimalUtil.add(payment.doubleValue(), orderItem.getTotalPrice().doubleValue());
-            orderItemVOList.add(this.copyOrderItemVOByOrderItem(orderItem));
+            orderItemVOList.add(this.assembleOrderItemVO(orderItem));
         }
         orderProductVO.setProductTotalPrice(payment);
         orderProductVO.setOrderItemVOList(orderItemVOList);
@@ -242,10 +245,10 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         Example exampleForOrderItem = new Example(OrderItem.class);
-        Example.Criteria criteriaForOrderItem = exampleForOrder.createCriteria();
+        Example.Criteria criteriaForOrderItem = exampleForOrderItem.createCriteria();
         criteriaForOrderItem.andEqualTo("orderNo", orderNo).andEqualTo("userId", userId);
         List<OrderItem> orderItemList = orderItemMapper.selectByExample(exampleForOrderItem);
-        OrderVO orderVO = this.copyOrderVOByOrderAndOrderItemList(order, orderItemList);
+        OrderVO orderVO = this.assembleOrderVO(order, orderItemList);
         return ResultResponse.ok(orderVO);
     }
 
@@ -257,13 +260,13 @@ public class OrderServiceImpl implements IOrderService {
         example.orderBy("createTime").desc();
         criteria.andEqualTo("userId", userId);
         List<Order> orderList = orderMapper.selectByExample(example);
-        List<OrderVO> orderVOList = this.copyOrderVOListByOrderList(userId, orderList);
+        List<OrderVO> orderVOList = this.assembleOrderVOList(userId, orderList);
         PageInfo pageInfo = new PageInfo(orderList);
         pageInfo.setList(orderVOList);
         return ResultResponse.ok(pageInfo);
     }
 
-    private List<OrderVO> copyOrderVOListByOrderList(Integer userId, List<Order> orderList) {
+    private List<OrderVO> assembleOrderVOList(Integer userId, List<Order> orderList) {
         List<OrderVO> orderVOList = new ArrayList<>();
         for (Order order : orderList) {
             List<OrderItem> orderItemList = new ArrayList<>();
@@ -276,7 +279,7 @@ public class OrderServiceImpl implements IOrderService {
                 criteria.andEqualTo("userId", userId);
                 orderItemList = orderItemMapper.selectByExample(example);
             }
-            OrderVO orderVO = this.copyOrderVOByOrderAndOrderItemList(order, orderItemList);
+            OrderVO orderVO = this.assembleOrderVO(order, orderItemList);
             orderVOList.add(orderVO);
         }
         return orderVOList;
@@ -288,7 +291,7 @@ public class OrderServiceImpl implements IOrderService {
         Example example = new Example(Order.class);
         example.orderBy("createTime").desc();
         List<Order> orderList = orderMapper.selectByExample(example);
-        List<OrderVO> orderVOList = this.copyOrderVOListByOrderList(null, orderList);
+        List<OrderVO> orderVOList = this.assembleOrderVOList(null, orderList);
         PageInfo pageInfo = new PageInfo(orderList);
         pageInfo.setList(orderVOList);
         return ResultResponse.ok(pageInfo);
@@ -308,7 +311,7 @@ public class OrderServiceImpl implements IOrderService {
         Example.Criteria criteriaForOrderItem = exampleForOrder.createCriteria();
         criteriaForOrderItem.andEqualTo("orderNo", orderNo);
         List<OrderItem> orderItemList = orderItemMapper.selectByExample(exampleForOrderItem);
-        OrderVO orderVO = this.copyOrderVOByOrderAndOrderItemList(order, orderItemList);
+        OrderVO orderVO = this.assembleOrderVO(order, orderItemList);
         return ResultResponse.ok(orderVO);
     }
 
@@ -327,7 +330,7 @@ public class OrderServiceImpl implements IOrderService {
         Example.Criteria criteriaForOrderItem = exampleForOrder.createCriteria();
         criteriaForOrderItem.andEqualTo("orderNo", orderNo);
         List<OrderItem> orderItemList = orderItemMapper.selectByExample(exampleForOrderItem);
-        OrderVO orderVO = this.copyOrderVOByOrderAndOrderItemList(order, orderItemList);
+        OrderVO orderVO = this.assembleOrderVO(order, orderItemList);
 
         PageInfo pageResult = new PageInfo(Lists.newArrayList(order));
         pageResult.setList(Lists.newArrayList(orderVO));

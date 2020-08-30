@@ -1,5 +1,6 @@
 package com.cj.cn.common;
 
+import com.cj.cn.exception.NoEnumException;
 import com.google.common.collect.Sets;
 
 import java.util.HashSet;
@@ -80,7 +81,7 @@ public class Const {
                     return orderStatusEnum;
                 }
             }
-            throw new RuntimeException("没有找到对应的枚举");
+            throw new NoEnumException("没有找到对应的枚举");
         }
     }
 
@@ -109,7 +110,7 @@ public class Const {
                     return paymentTypeEnum;
                 }
             }
-            throw new RuntimeException("没有找到对应的枚举");
+            throw new NoEnumException("没有找到对应的枚举");
         }
     }
 }

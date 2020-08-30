@@ -34,7 +34,7 @@ public class OrderController {
 
     @ApiOperation(value = "用户取消订单的接口", notes = "<span style='color:red;'>描述:</span>&nbsp;&nbsp;修改订单状态为已取消")
     @ApiImplicitParam(name = "orderNo", value = "订单号")
-    @DeleteMapping("cancel.do")
+    @PutMapping("cancel.do")
     public ResultResponse cancel(@RequestParam("orderNo") Long orderNo,
                                  HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);

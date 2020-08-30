@@ -19,6 +19,9 @@ public class LocalDateTimeUtil {
     }
 
     public static String dateToStr(LocalDateTime localDateTime) {
+        if (localDateTime == null) {
+            return "";
+        }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT);
         return localDateTime.format(formatter);
     }
