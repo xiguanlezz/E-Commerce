@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 /**
@@ -49,13 +51,32 @@ public class FastDFSClientUtil {
      * 上传文件
      *
      * @param file 要上传的文件
-     * @return 文件存储路径(group1/M00/00/00/...)
+     * @return 文件存储路径(group1 / M00 / 00 / 00 / ...)
      */
-    public String uploadBase64(MultipartFile file) {
+    public String uploadFile(MultipartFile file) {
         StorePath storePath = null;
         try {
             String fileExtendName = PropertiesUtil.getProperty("fastdfs.pic.extend.name");
             storePath = storageClient.uploadImage(new FastImageFile(file.getInputStream(), file.getSize(), fileExtendName, null));
+            return storePath.getGroup() + "/" + storePath.getPath();
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.info("上传文件发生错误");
+            return "";
+        }
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param file 要上传的文件
+     * @return 文件存储路径(group1 / M00 / 00 / 00 / ...)
+     */
+    public String uploadFile(File file) {
+        StorePath storePath = null;
+        try {
+            String fileExtendName = PropertiesUtil.getProperty("fastdfs.pic.extend.name");
+            storePath = storageClient.uploadImage(new FastImageFile(new FileInputStream(file), file.length(), fileExtendName, null));
             return storePath.getGroup() + "/" + storePath.getPath();
         } catch (IOException e) {
             e.printStackTrace();

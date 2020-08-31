@@ -141,7 +141,7 @@ public class ProductManageController {
             return ResultResponse.error(ResponseCode.NEED_LOGIN.getCode(), "用户未登录, 请登录");
         }
         if (iUserService.checkAdminRole(user).isSuccess()) {
-            String path = fastDFSClient.uploadBase64(file);
+            String path = fastDFSClient.uploadFile(file);
             if ("".equals(path)) {
                 return ResultResponse.error("上传文件失败");
             } else {
@@ -186,7 +186,7 @@ public class ProductManageController {
 
         if (iUserService.checkAdminRole(user).isSuccess()) {
             //富文本中对于返回值有自己的要求, 使用的是simditor需要按照simditor的要求进行返回
-            String path = fastDFSClient.uploadBase64(file);
+            String path = fastDFSClient.uploadFile(file);
             if ("".equals(path)) {
                 resultMap.put("success", false);
                 resultMap.put("msg", "上传失败");

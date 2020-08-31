@@ -85,6 +85,32 @@ public class Const {
         }
     }
 
+    public interface AlipayCallback {
+        String TRADE_STATUS_WAIT_BUYER_PAY = "WAIT_BUYER_PAY";
+        String TRADE_STATUS_TRADE_SUCCESS = "TRADE_SUCCESS";
+        String RESPONSE_SUCCESS = "success";
+        String RESPONSE_FAILED = "failed";
+    }
+
+    public enum PayPlatformEnum {
+        ALIPAY(1, "支付宝");
+        private int code;
+        private String value;
+
+        PayPlatformEnum(int code, String value) {
+            this.code = code;
+            this.value = value;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
     public enum PaymentTypeEnum {
         ONLINE_PAY(1, "在线支付");
         private int code;

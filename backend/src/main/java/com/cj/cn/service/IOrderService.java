@@ -2,7 +2,34 @@ package com.cj.cn.service;
 
 import com.cj.cn.response.ResultResponse;
 
+import java.util.Map;
+
 public interface IOrderService {
+    /**
+     * 支付
+     *
+     * @param userId  用户id
+     * @param orderNo 订单号
+     * @param path    上传的路径
+     */
+    ResultResponse pay(Integer userId, Long orderNo, String path);
+
+    /**
+     * 支付的回调接口
+     *
+     * @param params 回调携带的相关参数
+     */
+    ResultResponse aliCallback(Map<String, String> params);
+
+    /**
+     * 查询订单的状态
+     *
+     * @param userId  用户id
+     * @param orderNo 订单号
+     */
+    ResultResponse queryOrderPayStatus(Integer userId, Long orderNo);
+
+
     /**
      * 创建订单
      *
