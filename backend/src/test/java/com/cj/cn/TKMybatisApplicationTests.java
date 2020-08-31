@@ -102,7 +102,7 @@ public class TKMybatisApplicationTests {
         Example.Criteria criteria02 = example.createCriteria();
 
         example.orderBy("password").desc().orderBy("id").asc();     //设置排序规则
-        example.selectProperties("username", "password", "role");    //设置select的字段
+        example.selectProperties("username", "password", "role");    //设置select的字段, 如果不设置的话默认是查找全部字段
         example.setDistinct(true);      //设置去重
 
         criteria01.andBetween("role", 0, 1).andEqualTo("username", "admin");    //第一个参数是实体类的属性名
